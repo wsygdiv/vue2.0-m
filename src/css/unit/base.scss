@@ -1,0 +1,94 @@
+@import "common";
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0
+}
+
+body {
+  //background: #fff;
+  color: #333;
+  font-size: .448rem;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  //font-family: 'Microsoft YaHei', Arial, 'Hiragino Sans GB', Verdana, Helvetica, sans-serif, Tahoma, STHeiti;
+  line-height: 1.5em;
+  box-sizing: border-box;
+  background: #eee;
+}
+* {
+  box-sizing: inherit;
+}
+
+td, th, caption {
+font-size: .448rem;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer
+}
+
+a:hover {
+  color: $green;
+  text-decoration: none
+}
+
+sup {
+  line-height: 0
+}
+
+img {
+  border: none
+}
+
+ol, ul, li {
+  list-style: none
+}
+
+input, select, button, textarea {
+  outline: none;
+  padding: 0;
+  border: 0 none;
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+select {
+  -webkit-appearance: button;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+html {
+  overflow-y: auto;
+}
+
+iframe {
+  width: 100%;
+  border: 0 none;
+  overflow: hidden;
+  display: block;
+}
+
+.swiper-pagination-bullet {
+  opacity: 1;
+  width: .256rem;
+  height: .256rem;
+  background: #fff;
+}
+.swiper-pagination-bullet-active {
+  background: $green;
+}
+.swiper-pagination-fraction, .swiper-pagination-custom, .swiper-container-horizontal > .swiper-pagination-bullets {
+  bottom: .096rem;
+}
