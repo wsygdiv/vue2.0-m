@@ -67,7 +67,38 @@
 <script>
 	export default {
 		name: "my",
-		data: () => ({})
+		props: ['serviceUrl'],
+		data: () => ({
+			
+		}),
+		mounted: function() {
+
+			beforeCreate: {
+				this.$http({
+//					url: this.serviceUrl + "app/goods.htm",
+					method: "POST",
+					// 请求后台发送的数据
+					params: {
+						id: this.$route.params.goodsId,
+						data: {
+
+						}
+					},
+					// 设置请求头
+					headers: {
+						"Content-Type": "x-www-from-urlencoded"
+					}
+				}).then(function(res) {
+					// 请求成功回调
+					console.log(JSON.stringify(res.data));
+					this.msg = res.data;
+					//console.log(this.msg.companyArray)
+				}, function(res) {
+					// 请求失败回调
+					console.log("error from matDetail");
+				});
+			}
+		}
 	}
 </script>
 <style lang="scss" scoped>

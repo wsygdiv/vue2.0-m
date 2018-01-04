@@ -10,14 +10,15 @@ require("./css/unit/base.scss")
 require("./js/unit/common.js")
 Vue.use(VueAwesomeSwiper)
 Vue.use(VueResource)
-import AlloyFinger from 'alloyfinger/alloy_finger' // 手势库
-import AlloyFingerVue from 'alloyfinger/vue/alloy_finger.vue'
-import Transform from 'alloyfinger/transformjs/transform'
-Vue.use(AlloyFingerVue, {
-  AlloyFinger
+import AlloyFinger from 'alloyfinger' // 手势库
+import AlloyFingerPlugin from 'alloyfinger/vue/alloy_finger.vue'
+Vue.use(AlloyFingerPlugin, {
+    AlloyFinger
 })
-Vue.use(AlloyFingerVue, {
-  Transform
+import Transform from 'alloyfinger/transformjs/transform'
+
+Vue.use(Transform, {
+  AlloyFinger
 })
 // 阻止 vue 在启动时生成生产提示
 Vue.config.productionTip = false

@@ -72,7 +72,7 @@ export default {
 		      	console.log(JSON.stringify(res.data));
 						if(res.data.state==true){
 							window.sessionStorage.setItem('userId',res.data.userJson.userId);
-							window.sessionStorage.setItem('token',res.data.token);
+							window.sessionStorage.setItem('token',res.data.userJson.token);
 							this.show=true;
 							console.log(res.data.userJson.userId);
 							setTimeout(function(){

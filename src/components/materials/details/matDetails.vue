@@ -28,9 +28,24 @@
 			<!--规格-->
 			<div class="pro-rule">
 				<h2>规格参数</h2>
-				<div class="clearfix" v-for="specList in msg.spec_list" :key="specList.key">
-					<span class="tit" v-text="specList.specname">品牌</span>
-					<span class="tit-content" v-text="specList.specvalues">品牌</span>
+				<!--v-for="specList in msg.spec_list" :key="specList.key"-->
+				<div>
+					<p class="clearfix" v-for="specList in msg.spec_list" :key="specList.key">
+						<span class="tit">品牌</span>
+						<span class="tit-content" v-text="specList.specname">品牌</span>
+					</p>
+					<p class="clearfix" v-for="specList in msg.spec_list" :key="specList.key">
+						<span class="tit">安装方式</span>
+						<span class="tit-content" v-text="specList.specvalues">品牌</span>
+					</p>
+					<p class="clearfix" v-for="specList in msg.spec_list" :key="specList.key">
+						<span class="tit">等级</span>
+						<span class="tit-content" v-text="specList.specname">品牌</span>
+					</p>
+					<p class="clearfix">
+						<span class="tit">型号</span>
+						<span class="tit-content" v-text="msg.inventory_type">品牌</span>
+					</p>
 				</div>
 				<div class="see-more"><span class="iconfont">查看更多&#xe61b;</span></div>
 			</div>
@@ -56,52 +71,51 @@
 
 				</ul>
 			</div>
-			
-			
+
 		</div>
 		<!--购物车-->
-			<div class="send-cart" v-show="matFlag">
+		<div class="send-cart" v-if="matFlag">
 
-				<div class="cart-content">
-					<span class="close" @click="matFlag=false">X</span>
-					<div class="cart-info">
-						<div class="pic" :style="{backgroundImage: 'url(' + msg.goods_photos[0] + ')'}"></div>
-						<div class="cart-price">
-							<p>
-								<span class='price-num' v-text="msg.goods_current_price">￥798</span><br/>
-							</p>
+			<div class="cart-content">
+				<span class="close" @click="matFlag = false">X</span>
+				<div class="cart-info">
+					<div class="pic" :style="{backgroundImage: 'url(' + msg.goods_photos[0] + ')'}"></div>
+					<div class="cart-price">
+						<p>
+							<span class='price-num' v-text="msg.goods_current_price">￥798</span><br/>
+						</p>
 
-							<span class="rule-text">请选择规格</span>
-						</div>
-					</div>
-					<div class="specification1">
-						<p>规格</p>
-						<span>型号</span>
-					</div>
-					<div class="specification2">
-						<p>规格</p>
-						<span>型号</span>
-					</div>
-					<div class="buy-num">
-						<span class="num-text">购买数量</span>
-						<div class="btn-num">
-							<span>-</span>
-							<span>1</span>
-							<span>+</span>
-						</div>
-					</div>
-					<div class="btn-sure">
-						确定
+						<span class="rule-text">请选择规格</span>
 					</div>
 				</div>
-
+				<div class="specification1">
+					<p>规格</p>
+					<span>型号</span>
+				</div>
+				<div class="specification2">
+					<p>规格</p>
+					<span>型号</span>
+				</div>
+				<div class="buy-num">
+					<span class="num-text">购买数量</span>
+					<div class="btn-num">
+						<span v-on:click="numChange(-1)">-</span>
+						<input type="number" class="num" value="num" v-model="num"/>
+						<span v-on:click="numChange(1)">+</span>
+					</div>
+				</div>
+				<div class="btn-sure" @click="btnSure()">
+					确定
+				</div>
 			</div>
-			<div class="cover" v-show="matFlag">
 
-			</div>
-        <div class="btn-buy" v-show="matFlag==false">
-				<span class="btn-cart" @click="buy()">加入购物车</span>
-				<span class="btn-buy">立即购买</span>
+		</div>
+		<div class="cover" v-show="matFlag">
+
+		</div>
+		<div class="btn-buy" v-show="matFlag==false">
+			<span class="btn-cart" @click="buy()">加入购物车</span>
+			<span class="btn-buy">立即购买</span>
 		</div>
 	</div>
 </template>
@@ -111,7 +125,10 @@
 		props: ['serviceUrl'],
 		data: () => ({
 			matFlag: false,
+			userId: "",
+			token: '',
 			msg: {},
+			num:1,
 			matBanner: {
 				notNextTick: true,
 				autoplay: 4000,
@@ -123,31 +140,64 @@
 				pagination: '.banner .swiper-pagination',
 				observeParents: true,
 			},
+			
 		}),
 		methods: {
 			buy() {
 				this.matFlag = true;
-				this.$http({
-					url: this.serviceUrl + "app/addCart.htm",
-					method: "POST",
-					params: {
-						token: "O6iE0iP6YUK432769",
-					},
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
-					// 请求成功回调
-					console.log(JSON.stringify(res.data));
-					this.msg = res.data;
-					//console.log(this.msg.companyArray)
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
+			},
+			numChange: function(numChange) {
+				console.log(this.num);
+				if(numChange == 1) {
+					this.num++;
+				} else if(numChange == -1) {
+					this.num--;
+				}
+				if(this.num <= 1) {
+					this.num = 1;
+				}
+				
+			},
+
+			
+			btnSure() {
+				if(!window.sessionStorage.getItem("userId")) {
+					this.$router.push("/login");
+				} else {
+					this.userId = window.sessionStorage.getItem("userId");
+					this.token = window.sessionStorage.getItem("token");
+
+					this.$http({
+						url: this.serviceUrl + "app/addCart.htm",
+						method: "POST",
+						params: {
+							token: this.token,
+							userId: this.userId,
+							price: this.msg.goods_current_price,
+							id: this.msg.id,
+							count:this.num,
+					
+						},
+						headers: {
+							"Content-Type": "x-www-from-urlencoded"
+						}
+					}).then(function(res) {
+						console.log(this.userId)
+						console.log(this.msg.id)
+						console.log(this.token)
+						// 请求成功回调
+						console.log(JSON.stringify(res.data));
+						this.msg = res.data;
+						//console.log(this.msg.companyArray)
+					}, function(res) {
+						// 请求失败回调
+						console.log("error from matDetail");
+					});
+				}
 			},
 		},
 		mounted: function() {
+
 			beforeCreate: {
 				this.$http({
 					url: this.serviceUrl + "app/goods.htm",
@@ -211,8 +261,6 @@
 		height: auto;
 	}
 	
-	
-	
 	.matDetail {
 		background-color: #EEEEEE;
 		.app-content {
@@ -224,8 +272,8 @@
 			overflow-y: auto;
 		}
 		.fixH {
-		overflow-y:visible;
-	    }
+			overflow-y: visible;
+		}
 		.banner-box {
 			$height: 12rem;
 			width: 12rem;
@@ -270,7 +318,7 @@
 			margin-bottom: .32rem;
 			padding: .32rem;
 			color: #666666;
-			h2{
+			h2 {
 				@include text-overflow;
 			}
 			.pro-devo {
@@ -332,35 +380,33 @@
 			background-color: #FFFFFF;
 			padding: .48rem;
 			color: #666666;
-			ul{
+			ul {
 				background-color: #f5f5f5;
-				li:nth-child(2n){
+				li:nth-child(2n) {
 					margin-right: 0;
-				}	
+				}
 				li {
-				float: left;
-				margin-right: .128rem;
-				margin-bottom: .16rem;
-							
-				width: 5.44rem;
-				background-color: #FFFFFF;
-				.pic {
+					float: left;
+					margin-right: .128rem;
 					margin-bottom: .16rem;
-					box-sizing: border-box;
-					@include pic-bg(5.44rem, 5.44rem);
-				}
-				p {
-					@include text-overflow;
-				}
-				.good-name {
-					font-size: .416rem;
-				}
-				.good-price {
-					font-size: .512rem;
+					width: 5.44rem;
+					background-color: #FFFFFF;
+					.pic {
+						margin-bottom: .16rem;
+						box-sizing: border-box;
+						@include pic-bg(5.44rem, 5.44rem);
+					}
+					p {
+						@include text-overflow;
+					}
+					.good-name {
+						font-size: .416rem;
+					}
+					.good-price {
+						font-size: .512rem;
+					}
 				}
 			}
-			}
-			
 		}
 		.btn-buy {
 			position: fixed;
@@ -474,6 +520,11 @@
 						float: right;
 						margin-bottom: 1.68rem;
 						margin-right: .608rem;
+						.num{
+						      width: 1.4rem;
+						    font-size: 0.48rem;
+						    text-align: center
+						}
 						span {
 							background-color: #CCCCCC;
 							color: #000000;
