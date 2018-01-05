@@ -29,25 +29,22 @@
 			<div class="pro-rule">
 				<h2>规格参数</h2>
 				<!--v-for="specList in msg.spec_list" :key="specList.key"-->
-				<div>
-					<p class="clearfix" v-for="specList in msg.spec_list" :key="specList.key">
-						<span class="tit">品牌</span>
-						<span class="tit-content" v-text="specList.specname">品牌</span>
-					</p>
-					<p class="clearfix" v-for="specList in msg.spec_list" :key="specList.key">
-						<span class="tit">安装方式</span>
-						<span class="tit-content" v-text="specList.specvalues">品牌</span>
-					</p>
-					<p class="clearfix" v-for="specList in msg.spec_list" :key="specList.key">
-						<span class="tit">等级</span>
-						<span class="tit-content" v-text="specList.specname">品牌</span>
-					</p>
+				<div :class="{'autoH':layout=='iconhide'}"class="specList">
+					<div class=""v-for="(specList,index) in msg.spec_list" :key="specList.key" >
+						<p class="clearfix" :gsp="specList.specIds == undefinde?'':specList.specIds">
+						   <span class="tit" v-text="specList.specname">品牌</span>
+						   <span class="tit-content" v-text="specList.specvalues">品牌</span>
+					    </p>
+					</div>
 					<p class="clearfix">
 						<span class="tit">型号</span>
 						<span class="tit-content" v-text="msg.inventory_type">品牌</span>
-					</p>
+					</p>					
 				</div>
-				<div class="see-more"><span class="iconfont">查看更多&#xe61b;</span></div>
+				<p class="show-text"style="text-align: center;font-size: .484rem;">
+						<span class="show-more iconfont" @click="layout='iconhide'" v-if="layout=='iconmore'">查看更多&#xe61b;</span>
+						<span class="show-hide iconfont" @click="layout='iconmore'" v-if="layout=='iconhide'">收回更多&#xe64a;</span>
+				</p>
 			</div>
 			<!--商品详情-->
 			<div class="pro-detail">
@@ -90,11 +87,17 @@
 				</div>
 				<div class="specification1">
 					<p>规格</p>
-					<span>型号</span>
+					<p class="clearfix">
+						<span class="tit-content active" v-text="msg.inventory_type">型号</span>
+						<span>颜色</span>
+					</p>
 				</div>
-				<div class="specification2">
+				<div class="specification1">
 					<p>规格</p>
-					<span>型号</span>
+					<p class="clearfix">
+						<span class="tit-content" v-text="msg.inventory_type">型号</span>
+						<span>颜色</span>
+					</p>
 				</div>
 				<div class="buy-num">
 					<span class="num-text">购买数量</span>
@@ -124,11 +127,13 @@
 		name: "matDetail",
 		props: ['serviceUrl'],
 		data: () => ({
+			gsp:[],
 			matFlag: false,
 			userId: "",
 			token: '',
 			msg: {},
 			num:1,
+			layout: 'iconmore',
 			matBanner: {
 				notNextTick: true,
 				autoplay: 4000,
@@ -160,13 +165,14 @@
 			},
 
 			
-			btnSure() {
+			btnSure(index) {
 				if(!window.sessionStorage.getItem("userId")) {
 					this.$router.push("/login");
 				} else {
+					this.msg.spec_list.inventory_type == undefinde?'':specList.inventory_type;
 					this.userId = window.sessionStorage.getItem("userId");
 					this.token = window.sessionStorage.getItem("token");
-
+                    gsp.push(this.msg.spec_list.inventory_type+","+"颜色");
 					this.$http({
 						url: this.serviceUrl + "app/addCart.htm",
 						method: "POST",
@@ -176,7 +182,7 @@
 							price: this.msg.goods_current_price,
 							id: this.msg.id,
 							count:this.num,
-					
+					        gsp:this.gsp,
 						},
 						headers: {
 							"Content-Type": "x-www-from-urlencoded"
@@ -350,6 +356,11 @@
 			background-color: #FFFFFF;
 			margin-bottom: .32rem;
 			padding: .32rem;
+			.specList{
+				height: 4rem;
+				overflow: hidden;
+				font-size: .484rem;
+			}
 			span {
 				display: inline-block;
 				margin-bottom: .32rem;
@@ -483,29 +494,15 @@
 						width: 2.08rem;
 						height: .8rem;
 						text-align: center;
-						line-height: .8rem;
-						color: #FFFFFF;
+						line-height: .8rem;	
+						border-radius: .6rem;
+					}
+					.active{
 						background-color: $orange;
-						border-radius: .6rem;
+						color: #FFFFFF;
 					}
 				}
-				.specification2 {
-					padding: 0 0 0 .32rem;
-					margin-top: 1.12rem;
-					p {
-						margin-bottom: .32rem;
-					}
-					span {
-						display: inline-block;
-						width: 2.08rem;
-						height: .8rem;
-						text-align: center;
-						line-height: .8rem;
-						color: #999999;
-						background-color: #dddddd;
-						border-radius: .6rem;
-					}
-				}
+				
 				.buy-num {
 					overflow: hidden;
 					margin: .64rem 0 0 .32rem;
