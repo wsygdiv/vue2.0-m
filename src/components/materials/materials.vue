@@ -1,54 +1,54 @@
 <template>
 	<div id="materials" class="materials">
-			<!--公用头部-->
-	    <slot name="app-header"></slot>
-	    <div class="app-content">
-	    	 	<div class="tab">
-			<ul class="tab-box">
-				<li v-for="(tabListBox,index) in msg" :class="'tab-list' + ' ' + (index === tabFlag ? 'cur' : '')" :key="index" v-text="tabListBox.className" @click="tab(index)">
-				</li>
-			</ul>
-		</div>
-
-		<!-- Tab Box -->
-		<swiper class="on-tab" :options="onTabSwiper" ref="onTabSwiper">
-			<swiper-slide class="on-tab-list" v-for="(onTabListBox,index) in msg" :key="index.key">
-				<ul class="on-tab-list-box">
-					<!-- Main List -->
-					<li class="on-tab-list-box-list" v-for="onTabList in onTabListBox.goodsArray" :key="onTabList.key">
-						<router-link class="iconfont" :to="'/materials/details/'+onTabList.goodsId" tag="a">
-							<div class="pic" :style="{backgroundImage:'url('+ onTabList.goodsPicUrl +')'}"></div>
-							<div class="materials-name" v-text="onTabList.goodsName"></div>
-							<div class="materials-more">
-								<span class="materials-more-price">
-                                <span>￥</span>
-								<span v-text="onTabList.goodsPrice">666</span>
-								</span>
-							</div>
-						</router-link>
-
+		<!--公用头部-->
+		<slot name="app-header"></slot>
+		<div class="app-content">
+			<div class="tab">
+				<ul class="tab-box">
+					<li v-for="(tabListBox,index) in msg" :class="'tab-list' + ' ' + (index === tabFlag ? 'cur' : '')" :key="index" v-text="tabListBox.className" @click="tab(index)">
 					</li>
-					<!-- Main List 为空的时候 -->
-					<li class="cue-box" v-if="onTabListBox.goodsArray.length == 0">
-						<div class="cue">暂无数据...</div>
-					</li>
-					<!-- Main List 加载更多 -->
-					<infinite-loading @infinite="infiniteHandler($event,index)" spinner="circles" v-if="onTabListBox.goodsArray.length != 0">
-						<!-- 加载更多却没有数据的时候 -->
-						<div class="no-more" slot="no-more">
-							该分类下没有更多了...
-						</div>
-						<div class="no-more" slot="no-results">
-							该分类下没有更多了...
-						</div>
-					</infinite-loading>
 				</ul>
-			</swiper-slide>
-		</swiper>
+			</div>
 
-	    </div>
+			<!-- Tab Box -->
+			<swiper class="on-tab" :options="onTabSwiper" ref="onTabSwiper">
+				<swiper-slide class="on-tab-list" v-for="(onTabListBox,index) in msg" :key="index.key">
+					<ul class="on-tab-list-box">
+						<!-- Main List -->
+						<li class="on-tab-list-box-list" v-for="onTabList in onTabListBox.goodsArray" :key="onTabList.key">
+							<router-link class="iconfont" :to="'/materials/details/'+98545" tag="a">
+								<div class="pic" :style="{backgroundImage:'url('+ onTabList.goodsPicUrl +')'}"></div>
+								<div class="materials-name" v-text="onTabList.goodsName"></div>
+								<div class="materials-more">
+									<span class="materials-more-price">
+                                <span>￥</span>
+									<span v-text="onTabList.goodsPrice">666</span>
+									</span>
+								</div>
+							</router-link>
+
+						</li>
+						<!-- Main List 为空的时候 -->
+						<li class="cue-box" v-if="onTabListBox.goodsArray.length == 0">
+							<div class="cue">暂无数据...</div>
+						</li>
+						<!-- Main List 加载更多 -->
+						<infinite-loading @infinite="infiniteHandler($event,index)" spinner="circles" v-if="onTabListBox.goodsArray.length != 0">
+							<!-- 加载更多却没有数据的时候 -->
+							<div class="no-more" slot="no-more">
+								该分类下没有更多了...
+							</div>
+							<div class="no-more" slot="no-results">
+								该分类下没有更多了...
+							</div>
+						</infinite-loading>
+					</ul>
+				</swiper-slide>
+			</swiper>
+
+		</div>
 		<!-- Tab -->
-	
+
 	</div>
 </template>
 <script>
@@ -93,7 +93,7 @@
 					//分页请求 Start
 					this.$http({
 						// url: this.serviceUrl + "app/goods_page.htm",
-						url: this.serviceUrl +"app/goods_page.htm",
+						url: this.serviceUrl + "app/goods_page.htm",
 						method: "POST",
 						params: {
 							gc_id: this.msg[num].classId, //请求那个分类下的数据
@@ -127,7 +127,7 @@
 
 			//加载默认数据 Start
 			this.$http({
-				url:  this.serviceUrl+"app/goodsList.htm",
+				url: this.serviceUrl + "app/goodsList.htm",
 				method: "POST",
 				params: {
 					pageSize: this.pageSize,
@@ -154,7 +154,7 @@
 	@import "./../../css/unit/common";
 	$padding: .32rem;
 	$listBar: #eeeeee;
-	.app-content{
+	.app-content {
 		position: fixed;
 		top: 1.408rem;
 		bottom: 0;
@@ -162,10 +162,11 @@
 		width: 100%;
 		overflow-y: auto;
 	}
+	
 	//main-tab Start
 	.tab {
 		$tabHeight: 1.408rem;
-		top:1.408rem;
+		top: 1.408rem;
 		left: 0;
 		width: 100%;
 		position: fixed;

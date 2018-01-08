@@ -29,17 +29,16 @@
 			<div class="pro-rule">
 				<h2>规格参数</h2>
 				<!--v-for="specList in msg.spec_list" :key="specList.key"-->
-				<div :class="{'autoH':layout=='iconhide'}"class="specList">
+				<div :class="{'autoH1':layout=='iconhide'}"class="specList">
 					<div class=""v-for="(specList,index) in msg.spec_list" :key="specList.key" >
-						<p class="clearfix" :gsp="specList.specIds == undefinde?'':specList.specIds">
+						<p class="clearfix">
 						   <span class="tit" v-text="specList.specname">品牌</span>
-						   <span class="tit-content" v-text="specList.specvalues">品牌</span>
+						   <span v-for="(specKind,index) in specList.specvalues":key="specKind.key">
+						   	   <span class="tit-content" v-text="specKind">品牌</span>
+						   </span>		
 					    </p>
 					</div>
-					<p class="clearfix">
-						<span class="tit">型号</span>
-						<span class="tit-content" v-text="msg.inventory_type">品牌</span>
-					</p>					
+										
 				</div>
 				<p class="show-text"style="text-align: center;font-size: .484rem;">
 						<span class="show-more iconfont" @click="layout='iconhide'" v-if="layout=='iconmore'">查看更多&#xe61b;</span>
@@ -76,7 +75,7 @@
 			<div class="cart-content">
 				<span class="close" @click="matFlag = false">X</span>
 				<div class="cart-info">
-					<div class="pic" :style="{backgroundImage: 'url(' + msg.goods_photos[0] + ')'}"></div>
+					<div class="pic" :style="{backgroundImage: 'url(' + msg.goods_photos + ')'}"></div>
 					<div class="cart-price">
 						<p>
 							<span class='price-num' v-text="msg.goods_current_price">￥798</span><br/>
@@ -85,20 +84,15 @@
 						<span class="rule-text">请选择规格</span>
 					</div>
 				</div>
-				<div class="specification1">
-					<p>规格</p>
-					<p class="clearfix">
-						<span class="tit-content active" v-text="msg.inventory_type">型号</span>
-						<span>颜色</span>
-					</p>
+				<div class="specification1"v-for="(specList,index) in msg.spec_list" :key="specList.key" >
+						<div class="clearfix" >
+						   <span class="tit" v-text="specList.specname">品牌</span>
+						   <p v-for="(specKind,index) in specList.specvalues":key="specKind.key">
+						   	   <span class="tit-content" v-text="specKind":ref="index === tabFlag ? 'active' : ''"   :class="index === tabFlag ? 'active' : ''" @click="tab(index)">品牌</span>
+						   </p>						   
+					    </div>
 				</div>
-				<div class="specification1">
-					<p>规格</p>
-					<p class="clearfix">
-						<span class="tit-content" v-text="msg.inventory_type">型号</span>
-						<span>颜色</span>
-					</p>
-				</div>
+				
 				<div class="buy-num">
 					<span class="num-text">购买数量</span>
 					<div class="btn-num">
@@ -127,8 +121,9 @@
 		name: "matDetail",
 		props: ['serviceUrl'],
 		data: () => ({
-			gsp:[],
+			gsp:"",
 			matFlag: false,
+			tabFlag: 0,
 			userId: "",
 			token: '',
 			msg: {},
@@ -151,6 +146,9 @@
 			buy() {
 				this.matFlag = true;
 			},
+			tab(num) {
+				this.tabFlag = num;
+			},
 			numChange: function(numChange) {
 				console.log(this.num);
 				if(numChange == 1) {
@@ -162,17 +160,23 @@
 					this.num = 1;
 				}
 				
-			},
-
-			
-			btnSure(index) {
+			},			
+			btnSure() {
 				if(!window.sessionStorage.getItem("userId")) {
 					this.$router.push("/login");
 				} else {
-					this.msg.spec_list.inventory_type == undefinde?'':specList.inventory_type;
 					this.userId = window.sessionStorage.getItem("userId");
 					this.token = window.sessionStorage.getItem("token");
-                    gsp.push(this.msg.spec_list.inventory_type+","+"颜色");
+//                  this.gsp.push(this.$refs.active);
+                    
+                    for (var i = 0;i < this.$refs.active.length;i++) {
+                    	var obj=this.msg.spec_list[i].specIds[0];
+                    	this.gsp+=obj+",";
+                    }
+//                   this.gsp=this.gsp.substr()(0,this.gsp.Length-1);
+//                  this.gsp=this.gsp.ToString().RTrim(',');
+//                  console.log(this.$refs.index[0].innerText);
+                    console.log(JSON.stringify(this.gsp));                 
 					this.$http({
 						url: this.serviceUrl + "app/addCart.htm",
 						method: "POST",
@@ -206,7 +210,8 @@
 
 			beforeCreate: {
 				this.$http({
-					url: this.serviceUrl + "app/goods.htm",
+//					url: this.serviceUrl + "app/goods.htm",
+					url: 'http://192.168.8.183:8088/app/goods.htm',
 					method: "POST",
 					// 请求后台发送的数据
 					params: {
@@ -356,6 +361,7 @@
 			background-color: #FFFFFF;
 			margin-bottom: .32rem;
 			padding: .32rem;
+			
 			.specList{
 				height: 4rem;
 				overflow: hidden;
@@ -376,6 +382,9 @@
 			.see-more {
 				color: #999999;
 				text-align: center;
+			}
+			.autoH1{
+				height:auto;
 			}
 		}
 		.pro-detail {
@@ -485,13 +494,14 @@
 				}
 				.specification1 {
 					padding: 0 0 0 .32rem;
-					margin-top: 1.12rem;
+					margin-top: 1rem;
 					p {
 						margin-bottom: .32rem;
+						width:auto;						
 					}
 					span {
 						display: inline-block;
-						width: 2.08rem;
+						padding: 0 .24rem;
 						height: .8rem;
 						text-align: center;
 						line-height: .8rem;	
