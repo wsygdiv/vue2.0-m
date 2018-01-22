@@ -2,16 +2,16 @@
 	<div id="my" class="my">
     <div class="my-header">
     	 <span style="text-align: center;font-size: .554rem;">我的</span>
-    	 <span class="iconfont"style="float: right;font-size: .672rem;margin-right:.12rem">
-    	 	    &#xe644;
-    	 </span>
+    	 <!--<span >
+    	 	    <router-link  class="iconfont"tag="a"to="/my/setEdit"style="float: right;font-size: .672rem;margin-right:.12rem;color: #FFFFFF;">&#xe644;</router-link>
+    	 </span>-->
     	 <div class="my-name">
-    	 	   <span class="user-contain"style="float: left;"><img src="../../assets/user.png"/></span>
+    	 	   <span class="user-contain"style="float: left;"><img :src="msg.touxiang"/></span>
     	 	   <div class="my-name-info" style="float: left;">
-    	 	   	   <h3>Alisa</h3>
-    	 	   	   <span>136589895</span>    	 	   	   
+    	 	   	   <h3 v-text="msg.userName">Alisa</h3>
+    	 	   	   <span v-text="msg.phone">136589895</span>    	 	   	   
     	 	   </div>
-    	 	   <router-link class="iconfont" to="/enterprise" tag="a"style="float: right;margin: .816rem .12rem 0 0;color: #FFFFFF;">&#xe602;</router-link>
+    	 	   <router-link class="iconfont" to="/my/list" tag="a"style="float: right;margin: .816rem .12rem 0 0;color: #FFFFFF;">&#xe602;</router-link>
     	 </div>
     </div>
 		<div class="btn-box">
@@ -19,15 +19,17 @@
 				<router-link to="/hotNew" tag="li">
 					<span class="iconfont btn-icon">&#xe74e;</span>
 					<span class="btn-text">消息</span>
-					<span class="num-msg">3</span>
+					<span class="num-msg"v-text="msg.message">3</span>
 				</router-link>
-				<router-link to="/live" tag="li">
+				<router-link to="javascrit:void(0);" tag="li">
 					<span class="iconfont btn-icon">&#xe621;</span>
 					<span class="btn-text">待付款</span>
+					<span class="num-msg"v-text="msg.orderSubmitCount">3</span>
 				</router-link>
-				<router-link to="/encyclopedias" tag="li">
+				<router-link to="javascrit:void(0);" tag="li">
 					<span class="iconfont btn-icon">&#xe675;</span>
 					<span class="btn-text">待发货</span>
+					<span class="num-msg"v-text="msg.orderPayCount">3</span>
 				</router-link>
 			</ul>
 		</div>
@@ -36,27 +38,35 @@
 			  	<li>
 			  		<span class="iconfont iconG fl">&#xe687;</span>
 			  		<span class="user-info-name">账户余额</span>
-			  		<span class="price">0.00元</span>
+			  		<span class="price"><span v-text="msg.balance"></span>元</span>
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconG fl">&#xe636;</span>
 			  		<span class="user-info-name">意向金</span>
-			  		<span class="price">0.00元</span>
+			  		<span class="price"><span v-text="msg.intentionalGold"></span>元</span>
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconOO fl">&#xe604;</span>
 			  		<span class="user-info-name">积分</span>
-			  		<span class="price">0.00元</span>
+			  		<span class="price"><span v-text="msg.integral"></span>元</span>
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconG fl">&#xe627;</span>
 			  		<span class="user-info-name">收入</span>
-			  		<span class="price">0.00元</span>
+			  		<span class="price"><span v-text="msg.income"></span>元</span>
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconO fl">&#xe610;</span>
 			  		<span class="user-info-name">优惠分</span>
-			  		<span class="price">0.00元</span>
+			  		<span class="price"><span v-text="msg.discountCount"></span>元</span>
+			  	</li>
+			  	<li>
+			  		<span class="iconfont iconO fl">&#xe62f;</span>
+			  		<span class="user-info-name">我的消息</span>
+			  		<router-link to="/my/list/details"class="iconfont"tag="a">
+			  			<span class="iconfont btn-icon"style="float: right;font-size: .672rem;margin-right:.12rem;color: #FFFFFF;">&#xe74e;</span>
+						<span class="num-msg"v-text="msg.message">3</span>
+			  		</router-link>
 			  	</li>
 			  </ul>
 		</div>
@@ -64,40 +74,38 @@
 		<slot name="app-footer"></slot>
 	</div>
 </template>
-<script>
+<script>	
 	export default {
 		name: "my",
 		props: ['serviceUrl'],
 		data: () => ({
-			
+			msg:"",
 		}),
 		mounted: function() {
-
-			beforeCreate: {
-				this.$http({
-//					url: this.serviceUrl + "app/goods.htm",
+			if(!window.sessionStorage.getItem("userId")) {
+					this.$router.push("/login");
+				} else {
+					this.userId = window.sessionStorage.getItem("userId");
+					this.token = window.sessionStorage.getItem("token");
+			
+				this.axios({
+					url: this.serviceUrl + "app/personMessage.htm",
+//					url:"http://124.204.40.11:8088/app/personMessage.htm",
 					method: "POST",
 					// 请求后台发送的数据
-					params: {
-						id: this.$route.params.goodsId,
-						data: {
-
-						}
-					},
-					// 设置请求头
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+					data:  this.$qs.stringify({
+						userId:32769,//测试用的id
+					}),					
+				}).then((res) =>{
 					// 请求成功回调
-					console.log(JSON.stringify(res.data));
+//					console.log(JSON.stringify(res.data));
 					this.msg = res.data;
 					//console.log(this.msg.companyArray)
-				}, function(res) {
+				}, (err)=> {
 					// 请求失败回调
 					console.log("error from matDetail");
 				});
-			}
+				}
 		}
 	}
 </script>
@@ -201,6 +209,34 @@
     		height: 1.376rem;
     		padding:.24rem .32rem .24rem 0;
     		font-size: .512rem;
+    		position: relative;
+    	.btn-icon{
+          height: 1.12rem;
+          font-size: .8rem;
+          color: $green;
+          line-height: 1.12rem;
+          display: inline-block;
+        }
+        .btn-text{
+          height: .8rem;
+          line-height: .8rem;
+          font-size: .384rem;
+          color: $green;
+          display: inline-block;
+        }
+       .num-msg{
+        	position: absolute;
+        	top: 0.1rem;
+        	right: 1.1rem;
+        	width: 0.6rem;
+        	height: 0.6rem;
+        	font-size: 0.5rem;
+        	border-radius: 50%;
+        	color: #FFFFFF;
+        	text-align: center;
+        	line-height:0.6rem ;
+        	background-color: #e11112;
+        }
     		.iconG{
             color: $green; 
             margin-right: 0.5rem; 

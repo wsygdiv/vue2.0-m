@@ -1,5 +1,5 @@
 <template>
-	<div id="matDetail" class="matDetail">
+	<div id="matDetails" class="matDetails">
 		<slot name="app-header"></slot>
 		<div class="app-content" :class="false == matFlag ? 'autoH' : 'fixH'">
 			<!--大图banner Start-->
@@ -118,7 +118,7 @@
 </template>
 <script>
 	export default {
-		name: "matDetail",
+		name: "matDetails",
 		props: ['serviceUrl'],
 		data: () => ({
 			gsp:"",
@@ -169,14 +169,15 @@
 					this.token = window.sessionStorage.getItem("token");
 //                  this.gsp.push(this.$refs.active);
                     
-                    for (var i = 0;i < this.$refs.active.length;i++) {
-                    	var obj=this.msg.spec_list[i].specIds[0];
+                    for (let i = 0;i < this.$refs.active.length;i++) {
+                    	let obj=this.msg.spec_list[i].specIds[0];
                     	this.gsp+=obj+",";
-                    }
-//                   this.gsp=this.gsp.substr()(0,this.gsp.Length-1);
-//                  this.gsp=this.gsp.ToString().RTrim(',');
-//                  console.log(this.$refs.index[0].innerText);
-                    console.log(JSON.stringify(this.gsp));                 
+                    };
+                    let str = this.gsp;
+//                  this.gsp = (str.substring(str.length-1)==',')?str.substring(0,str.length-1):str;
+                    this.gsp =JSON.stringify(str.substring(0,str.length-1));
+                     console.log(this.gsp);
+//                  console.log(JSON.stringify(this.gsp)); 
 					this.$http({
 						url: this.serviceUrl + "app/addCart.htm",
 						method: "POST",
@@ -210,8 +211,8 @@
 
 			beforeCreate: {
 				this.$http({
-//					url: this.serviceUrl + "app/goods.htm",
-					url: 'http://192.168.8.183:8088/app/goods.htm',
+					url: this.serviceUrl + "app/goods.htm",
+//					url: 'http://192.168.8.183:8088/app/goods.htm',
 					method: "POST",
 					// 请求后台发送的数据
 					params: {
@@ -464,10 +465,10 @@
 				.close {
 					position: absolute;
 					top: 0;
-					right: .16rem;
+					right: .32rem;
 				}
 				.cart-info {
-					padding: 1rem 0 0 .32rem;
+					padding: 1rem .32rem 0 .32rem;
 					overflow: hidden;
 					img {
 						border: 1px solid #CCCCCC;

@@ -16,7 +16,7 @@
 					<ul class="on-tab-list-box">
 						<!-- Main List -->
 						<li class="on-tab-list-box-list" v-for="onTabList in onTabListBox.goodsArray" :key="onTabList.key">
-							<router-link class="iconfont" :to="'/materials/details/'+98545" tag="a">
+							<router-link class="iconfont" :to="'/materials/details/'+98532" tag="a">
 								<div class="pic" :style="{backgroundImage:'url('+ onTabList.goodsPicUrl +')'}"></div>
 								<div class="materials-name" v-text="onTabList.goodsName"></div>
 								<div class="materials-more">

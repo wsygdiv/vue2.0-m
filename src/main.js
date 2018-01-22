@@ -15,11 +15,19 @@ import AlloyFingerPlugin from 'alloyfinger/vue/alloy_finger.vue'
 Vue.use(AlloyFingerPlugin, {
     AlloyFinger
 })
+import axios from 'axios'
+Vue.prototype.axios  = axios
 import Transform from 'alloyfinger/transformjs/transform'
 
 Vue.use(Transform, {
   AlloyFinger
 })
+import MintUI from 'mint-ui'
+import 'mint-ui/lib/style.css'
+Vue.use(MintUI)
+import qs from 'qs'
+/* 注入vue全局中，这样我们可以在组件内或者JS内通过使用this.$qs来使用qs库*/
+Vue.prototype.$qs = qs
 // 阻止 vue 在启动时生成生产提示
 Vue.config.productionTip = false
 // vue-resource 允许跨域携带cookie

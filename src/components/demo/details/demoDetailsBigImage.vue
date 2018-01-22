@@ -175,7 +175,7 @@
 				max-width: auto;
 				height: 100%;
 			}
-			.swiper-zoom img {
+			.swiper-zoom-container img {
 				width: 100%;
 				max-width: auto;
 				position: absolute;
