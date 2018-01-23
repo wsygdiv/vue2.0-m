@@ -11,8 +11,9 @@
           <li v-for="(tabListBox,index) in msg"
             :class="'tab-list' + ' ' + (index === tabFlag ? 'cur' : '')"
             :key="index"
-            v-text="tabListBox.name"
             @click="tab(index)">
+            <span v-text="tabListBox.name"></span>
+            <span class="remind"v-show="remindFlag == 0"ref="remind"></span>
           </li>
         </ul>
       </div>
@@ -22,12 +23,12 @@
           <ul class="on-tab-list-box">
             <!-- Main List -->
             <router-link :to="'details/' + onTabList.id" append tag="li" class="on-tab-list-box-list" v-for="onTabList in onTabListBox.list" :key="onTabList.key">
-              <div class="title" v-text="onTabList.title"></div>
-              <div class="content" v-text="onTabList.content"></div>
-              <div class="more">
-                <span class="date" v-text="onTabList.date"></span>
-                <span class="hits"><span class="iconfont">&#xe646;</span><span v-text="onTabList.hits"></span></span>
+              <div class="title" >
+              	<span v-text="onTabList.title"></span>
+              	 <span class="date" v-text="onTabList.date"></span>
               </div>
+              <div class="content" v-text="onTabList.content"></div>
+             
             </router-link>
             <!-- Main List 为空的时候 -->
             <li class="cue-box" v-if="onTabListBox.list.length == 0">
@@ -62,7 +63,7 @@ export default {
     msg:[],
     pageSize: 10,//每页 数据个数
     tabFlag: 0,//切换swiper 的index  同时也是请求的第几个（类别）数据
-
+    remindFlag : 0,
     onTabSwiper: {
       notNextTick: true,
 
@@ -82,6 +83,7 @@ export default {
     tab(num) {
       this.onTabSwiperFn.slideTo(num, 300, false);
       this.tabFlag = num;
+      console.log(this.$children[1])
     },
     infiniteHandler($state,num) {
       // console.log(this.tabFlag);
@@ -183,6 +185,16 @@ $listBar: #eeeeee;
       display: inline-block;
       margin: 0 $padding 0 0;
       line-height: $tabHeight;
+      position:relative;
+      .remind{
+      	position: absolute;
+		    top: 20px;
+		    right: 15px;
+		    width: 10px;
+		    height: 10px;
+		    border-radius: 50%;
+		    background-color: #FF5715;
+      }
       &.cur {
         color: $green;
         border-bottom: .064rem solid yellowgreen;
@@ -229,21 +241,15 @@ $listBar: #eeeeee;
           font-size: .416rem;
           line-height: 1.5em;
         }
-        .more {
-          color: #999;
-          overflow: hidden;
-          font-size: .384rem;
-          margin: .1rem 0 0 0;
-          padding: 0 $padding;
           .date {
-            float: left;
+            float: right;
+            font-size: .448rem;
           }
           .hits {
             float: right;
             .iconfont {
               margin: 0 $padding/2 0 0;
             }
-          }
         }
       }
       //Edit Style End ----------↑----------↑----------

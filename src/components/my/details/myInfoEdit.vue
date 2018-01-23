@@ -64,8 +64,10 @@
 					</span>
 				</li>
 				<li>
-					<span class="user-info-name">联系地址</span>
-					<span class="edit-more"><router-link to="/my/list/details/setAddr"class=""tag="a"><span v-text="currentAddr"></span><span class="iconfont">&#xe602;</span></router-link>
+					<span class="user-info-name">所在地区</span>
+					<!--<span class="edit-more"><router-link to="/my/list/details/setAddr"class=""tag="a"><span v-text="currentAddr"></span><span class="iconfont">&#xe602;</span></router-link>
+					</span>-->
+					<span class="edit-more"><span v-text="currentAddr"@click="Location" size="large"ref="addT"></span><span class="iconfont">&#xe602;</span>
 					</span>
 				</li>
 				<li>
@@ -166,7 +168,24 @@
 				</div>
 				<mt-field label="工作职称" placeholder="请输入工作职称" v-model="workTit1"></mt-field>
 			</div>
-
+		</mt-popup>
+		<mt-popup v-model="popupVisibleLocation" position="bottom" closeOnClickModal="closeUser">
+			<div>
+				<div class="page-picker-wrapper">
+					 <select class="select"   v-on:change="changeProvince":value="provinceName">
+					      <option  value=""v-text="defaultProvince">省份</option>
+					      <option v-for="(province,index) in addressProvince":key="index" :value="province.id"ref="provinceName" @click="provinceName(index)"v-text="province.name"></option>
+					 </select>
+					 <select class="select" v-on:change="changeCity" >
+					      <option  value=""v-text="defaultCity">市</option>
+					      <option v-for="(city,index) in addressCity" :key="index":value="city.id"v-text="city.name"></option>
+					 </select>
+					 <select class="select"v-on:change="changeRegion">
+					      <option  value=""v-text="defaultRegion">县</option>
+					      <option v-for="(area,index) in addressRegion":key="index"v-text="area.name"></option>
+					 </select>
+				</div>
+			</div>
 		</mt-popup>
 		<mt-popup v-model="popupVisibleMarriage" position="bottom">
 			<div>
@@ -242,9 +261,10 @@
 </template>
 <script>
 	import Upload from '@/components/my/details/Upload'
+	const address = {};
 	export default {
 		name: "myInfoEdit",
-		props: ['serviceUrl'],
+		props: ['serviceUrl',"id"],
 		components: {
 			Upload
 		},
@@ -256,6 +276,7 @@
 			popupVisibleWorkTit: false,
 			popupVisibleTeach: false,
 			popupVisibleIndustry: false,
+			popupVisibleLocation:false,
 			popupVisibleIdentity: false,
 			popupVisibleMIncome: false,
 			popupVisibleMarriage: false,
@@ -287,6 +308,10 @@
 			value: null,
 			avater: '', //头像地址
 			localPic: '', // 未剪裁的头像地址
+			areaId:"",
+			addrId:"",
+			form:"",
+			provinceName:"",
 //			positivePic: '',
 			numberSlot: [{
 				flex: 1,
@@ -300,7 +325,16 @@
 				values: ["未婚", "已婚"],
 				className: 'slot2',
 			}],
+			addressProvince: '',
+			addressCity: '',
+            addressRegion: '',
+            currentP:'',//选中省
+            currentC:'',//选中市
+            currentR:'',//选中县
 			msg: "",
+			defaultProvince:"",
+			defaultCity:"",//默认市
+			defaultRegion:"",//默认地区
 		}),
 		methods: {
 			open(picker) {
@@ -315,17 +349,91 @@
 			onMChange(picker, values) {
 				this.marriage1 = values[0];
 			},
-//			出生日期修改
+			//地区修改
+			Location(){
+				this.popupVisibleLocation = true;
+//				console.log(this.areaId)
+				this.axios({
+					//					url: this.serviceUrl + "app/goods.htm",
+					url:"http://192.168.8.214:8443/app/getLinkAddr.htm",
+					method: "POST",
+					data: this.$qs.stringify({
+						areaId: this.areaId, 
+					}),
+				}).then((res) => {
+//                     console.log(res.data)
+                       this.form = res.data;
+						this.defaultProvince = res.data.defaultProvince.name;
+						this.defaultCity = res.data.defaultCity.name;
+						this.defaultRegion = res.data.defaultRegion.name;
+						this.addressProvince = res.data.provinces;
+//						console.log(this.addressProvince)
+				},  (err)=>  {
+					// 请求失败回调
+					console.log("地址请求错误");
+				});
+			},
+			provincName(index){
+				alert(1)
+				console.log(this.$refs.provinceName) 
+			},
+			//市区修改
+			changeProvince(val){
+//				console.log(val.target.value)
+				this.defaultCity = "请选择",
+				this.defaultRegion ="请选择",
+				this.addrId = val.target.value;
+				this.currentP = val.target.value;
+//				console.log(this.addrId);
+//				console.log(this.currentP);
+				this.axios({
+					//					url: this.serviceUrl + "app/goods.htm",
+					url:"http://192.168.8.214:8443/app/getChildAddr.htm",
+					method: "POST",
+					data: this.$qs.stringify({
+						addrId: this.addrId, 
+					}),
+				}).then((res) => {
+                       this.form = res.data;
+//                     console.log(res.data)
+						this.addressCity = res.data;
+//						console.log(this.addressCity)
+				},  (err)=>  {
+					// 请求失败回调
+					console.log("地址请求错误");
+				});
+			},
+			changeCity(val){
+				this.addrId = val.target.value;
+				this.axios({
+					//					url: this.serviceUrl + "app/goods.htm",
+					url:"http://192.168.8.214:8443/app/getChildAddr.htm",
+					method: "POST",
+					data: this.$qs.stringify({
+						addrId: this.addrId, 
+					}),
+				}).then((res) => {
+                       this.form = res.data;
+//                     console.log(res.data)
+						this.addressRegion = res.data;
+//						console.log(this.addressRegion)
+				},  (err)=>  {
+					// 请求失败回调
+					console.log("地址请求错误");
+				});
+			},
+			changeRegion(){
+//				console.log(this.$refs.selectId)
+//				this.currentAddr = this.$refs.selectId.text
+			},
+   //			出生日期修改
 			handleChange() {
 				this.axios.post({
 					//					url: this.serviceUrl + "app/goods.htm",
 					data: this.$qs.stringify({
 						birthday: this.birthday, 
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('生日修改失败')
 				        }
@@ -342,10 +450,7 @@
 					data: this.$qs.stringify({
 						sex: this.sex, //测试用的id
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('性别修改失败')
 				        }
@@ -363,10 +468,7 @@
 					data: this.$qs.stringify({
 						username: this.username, //测试用的id
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('用户名修改失败')
 				        }
@@ -384,10 +486,7 @@
 					data: this.$qs.stringify({
 						interests: this.interests, //测试用的id
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) =>{
                        if (!res.data.state) {
 				          alert('兴趣爱好修改失败')
 				        }
@@ -405,10 +504,7 @@
 					data: this.$qs.stringify({
 						workUnit: this.workUnit,
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('工作单位修改失败')
 				        }
@@ -426,10 +522,7 @@
 					data: this.$qs.stringify({
 						workTit: this.workTit, 
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('工作职称修改失败')
 				        }
@@ -447,10 +540,7 @@
 					data: this.$qs.stringify({
 						marriage: this.marriage, 
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('婚姻状态修改失败')
 				        }
@@ -468,10 +558,7 @@
 					data: this.$qs.stringify({
 						mIncome: this.mIncome, 
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) =>{
                        if (!res.data.state) {
 				          alert('月收入修改失败')
 				        }
@@ -489,10 +576,7 @@
 					data: this.$qs.stringify({
 						identity: this.identity, 
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('身份证修改失败')
 				        }
@@ -510,10 +594,7 @@
 					data: this.$qs.stringify({
 						industry: this.industry, 
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('教育程度修改失败')
 				        }
@@ -531,10 +612,7 @@
 					data: this.$qs.stringify({
 						teach: this.teach, 
 					}),
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+				}).then((res) => {
                        if (!res.data.state) {
 				          alert('所在行业修改失败')
 				        }
@@ -545,17 +623,17 @@
 				this.popupVisibleIndustry = false;
 			},
 			confirmClose() {
-				popupVisibleSex: false;
-				popupVisibleUser: false;
-				popupVisibleInterests: false;
-				popupVisibleWorkUnit: false;
-				popupVisibleWorkTit: false;
-				popupVisibleTeach: false;
-				popupVisibleIndustry: false;
-				popupVisibleIdentity: false;
-				popupVisibleMIncome: false;
-				popupVisibleMarriage: false;
-				popupVisibleBirth: false;
+				this.popupVisibleSex = false;
+				this.popupVisibleUser = false;
+				this.popupVisibleInterests = false;
+				this.popupVisibleWorkUnit = false;
+				this.popupVisibleWorkTit = false;
+				this.popupVisibleTeach = false;
+				this.popupVisibleIndustry = false;
+				this.popupVisibleIdentity = false;
+				this.popupVisibleMIncome = false;
+				this.popupVisibleMarriage = false;
+				this.popupVisibleBirth = false;
 			},
 			// 跳转到图片剪裁
 			getLocalPic: function(url) {
@@ -584,6 +662,7 @@
 				// 请求成功回调
 				console.log(JSON.stringify(res.data));
 //				this.msg = res.data;
+       			this.areaId=res.data.areaId;
 				this.avater = res.data.touxiang //头像
 				this.username = res.data.userName //用户名
 				this.birthday = res.data.birthday,//出生日期
@@ -858,5 +937,15 @@
 				}
 			}
 		}
+	}
+	.select{
+		font-size: .448rem;
+		width: 30%;
+		max-height:2rem ;
+		overflow: hidden;
+	}
+	.select option{
+		width: 100%;
+		font-size: .448rem;
 	}
 </style>

@@ -63,8 +63,8 @@
 			  	<li>
 			  		<span class="iconfont iconO fl">&#xe62f;</span>
 			  		<span class="user-info-name">我的消息</span>
-			  		<router-link to="/my/list/details"class="iconfont"tag="a">
-			  			<span class="iconfont btn-icon"style="float: right;font-size: .672rem;margin-right:.12rem;color: #FFFFFF;">&#xe74e;</span>
+			  		<router-link to="/my/setEdit/myMessege"class="iconfont"tag="a">
+			  			<span class="iconfont btn-icon"style="float: right;font-size: .672rem;margin-right:.12rem;">&#xe74e;</span>
 						<span class="num-msg"v-text="msg.message">3</span>
 			  		</router-link>
 			  	</li>
