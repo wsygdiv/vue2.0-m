@@ -21,7 +21,7 @@
 			  		<span class="user-info-name">重置登录密码</span>
 			  		<span class="edit-more"><router-link to="my/my"class="iconfont"tag="a">&#xe602;</router-link></span>
 			  	</li>-->
-			  	<li style="text-align: center;">			
+			  	<li style="text-align: center;"class="backLogin">			
 			  		<mt-button @click.native="openConfirm" size="large"><span class="user-info-name">退出登录</span></mt-button>
 			  	</li>
 			  </ul>
@@ -46,6 +46,7 @@
 			   	   console.log(this.userId)
 			   	   MessageBox.confirm('确定执行此操作?').then(action => {
                       window.sessionStorage.removeItem("userId");
+                      this.$router.go(-1);
 			       });
 			   },
 			   
@@ -105,6 +106,13 @@
     margin: .24rem 0 .24rem 0;
     ul{
     	overflow: hidden;
+    	.backLogin{
+    			
+    			.mint-button--large{
+    				background-color: #4aab2d;
+    				color: #FFFFFF;
+    			}
+			}
     	li{
     		border-bottom: 1px solid #cccccc;
     		overflow: hidden;
@@ -137,6 +145,7 @@
 <style>
 	.user-info-name{
     			vertical-align: top;
+    			
     		}
     .mint-button--large {
     display: block;

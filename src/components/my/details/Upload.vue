@@ -34,7 +34,7 @@ export default {
       file: '',
       isAndroid: false,
       isIphone: false,
-      avater:''
+     
     }
   },
   methods: {
@@ -54,14 +54,15 @@ export default {
         return
       }
       formData.append('photo', file)
-      this.avater = this.$refs.file.value
+//    this.imgSrc = this.$refs.file.value
+      console.log(this.imgSrc)
       console.log(this.$refs.file.value)
-      console.log(file)
       let config = {
             headers:{'Content-Type':'multipart/form-data'}
       }
-      this.axios.post("http://192.168.8.214:8443/app/uploadTouxiang.htm" , formData,config).then((res) => {
-      	this.avater = res.data.imgUrl
+      this.axios.post(this.serviceUrl+"app/uploadTouxiang.htm" , formData,config).then((res) => {
+      	this.imgSrc = res.data.imgUrl
+      	console.log(this.imgSrc)
       	console.log(res.data)
         this.$emit('pic', res.data.filePath)
         if (res.data.fileSrc) {

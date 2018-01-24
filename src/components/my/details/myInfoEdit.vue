@@ -18,7 +18,7 @@
 						</Upload>-->
 						<Upload @pic="getLocalPic" :serviceUrl="serviceUrl">
 							<span class="head-pic">
-			                  <img ref="img" :src="avater" alt="pic">
+			                  <img ref="img" :src="imgSrc" alt="pic">
 			                </span>
 							<span class="btn-right iconfont">&#xe602;</span>
 						</Upload>
@@ -63,11 +63,11 @@
 					<span class="edit-more" @click="popupVisibleWorkTit = true" size="large"><span class="btn-right iconfont"><span v-text="workTit"class="info-private"></span>&#xe602;</span>
 					</span>
 				</li>
-				<li>
+				<li @click="Location">
 					<span class="user-info-name">所在地区</span>
 					<!--<span class="edit-more"><router-link to="/my/list/details/setAddr"class=""tag="a"><span v-text="currentAddr"></span><span class="iconfont">&#xe602;</span></router-link>
 					</span>-->
-					<span class="edit-more"><span v-text="currentAddr"@click="Location" size="large"ref="addT"></span><span class="iconfont">&#xe602;</span>
+					<span class="edit-more" @click="popupVisibleLocation = true"><span v-text="currentAddr" size="large"ref="addT"></span><span class="iconfont">&#xe602;</span>
 					</span>
 				</li>
 				<li>
@@ -97,6 +97,9 @@
 					<span class="edit-more" @click="popupVisibleIndustry = true" size="large"><span class="btn-right iconfont"><span v-text="industry"class="info-private"></span>&#xe602;</span>
 					</span>
 				</li>
+				<li style="text-align: center;"class="submitBtn">			
+			  		<mt-button @click.native="submitConfirm" size="large"><span class="user-info-name">确认提交</span></mt-button>
+			  	</li>
 			</ul>
 		</div>
 		<mt-popup v-model="popupVisibleSex" position="bottom">
@@ -169,21 +172,29 @@
 				<mt-field label="工作职称" placeholder="请输入工作职称" v-model="workTit1"></mt-field>
 			</div>
 		</mt-popup>
-		<mt-popup v-model="popupVisibleLocation" position="bottom" closeOnClickModal="closeUser">
+		<mt-popup v-model="popupVisibleLocation" position="bottom" >
 			<div>
 				<div class="page-picker-wrapper">
-					 <select class="select"   v-on:change="changeProvince":value="provinceName">
-					      <option  value=""v-text="defaultProvince">省份</option>
-					      <option v-for="(province,index) in addressProvince":key="index" :value="province.id"ref="provinceName" @click="provinceName(index)"v-text="province.name"></option>
-					 </select>
-					 <select class="select" v-on:change="changeCity" >
-					      <option  value=""v-text="defaultCity">市</option>
-					      <option v-for="(city,index) in addressCity" :key="index":value="city.id"v-text="city.name"></option>
-					 </select>
-					 <select class="select"v-on:change="changeRegion">
-					      <option  value=""v-text="defaultRegion">县</option>
-					      <option v-for="(area,index) in addressRegion":key="index"v-text="area.name"></option>
-					 </select>
+					 <ul class="select" ref="select">
+					      <li  value=""v-text="defaultProvince"@click="btnP =true">省份</li>
+					      <ul v-show="btnP == true">
+					      	<li v-for="(province,index) in addressProvince":key="index"@click="changeProvince(index)"ref="selValueP":id="province.id">{{province.name}}</li>
+					      </ul>
+					 </ul>
+					 <ul class="select"  >
+					      <li  value=""v-text="defaultCity"@click="btnC =true">市</li>
+					      <ul v-show="btnC == true">
+					      	<li v-for="(city,index) in addressCity"@click="changeCity(index)"ref="selValueC" :key="index":id="city.id">{{city.name}}</li>
+					      </ul>
+					      
+					 </ul>
+					 <ul class="select">
+					      <li  value=""v-text="defaultRegion"@click="btnA =true">县</li>
+					      <ul v-show="btnA == true">
+					      	<li v-for="(area,index) in addressRegion"@click="changeRegion(index)"ref="selValueA":key="index":id="area.id">{{area.name}}</li>
+					      </ul>
+					      
+					 </ul>
 				</div>
 			</div>
 		</mt-popup>
@@ -255,12 +266,17 @@
 				<mt-field label="所在行业" placeholder="请输入所在行业" v-model="industry1"></mt-field>
 			</div>
 		</mt-popup>
-		<mt-datetime-picker ref="picker4" type="date" v-model="birthday" year-format="{value} 年" month-format="{value} 月" date-format="{value} 日" @confirm="handleChange">
-		</mt-datetime-picker>
+		<!--<mt-datetime-picker ref="picker4" type="date" v-model="birthday" year-format="{value} 年" month-format="{value} 月" date-format="{value} 日" @confirm="handleChange">
+		</mt-datetime-picker>-->
+		<transition name="slide-fade">
+	      <router-view  :localPic="localPic" type="headPic" ></router-view>
+	    </transition>
 	</div>
 </template>
 <script>
 	import Upload from '@/components/my/details/Upload'
+	import { MessageBox } from 'mint-ui';
+	import { Toast } from 'mint-ui';
 	const address = {};
 	export default {
 		name: "myInfoEdit",
@@ -269,6 +285,9 @@
 			Upload
 		},
 		data: () => ({
+			btnP:false,
+			btnC:false,
+			btnA:false,
 			popupVisibleSex: false,
 			popupVisibleUser: false,
 			popupVisibleInterests: false,
@@ -283,6 +302,7 @@
 			popupVisibleBirth: false,
 			buttonBottom: 0,
 			closeUser: false,
+			imgSrc:'',
 			currentAddr: '',
 			sex: "",
 			sex1: "",
@@ -308,7 +328,6 @@
 			value: null,
 			avater: '', //头像地址
 			localPic: '', // 未剪裁的头像地址
-			areaId:"",
 			addrId:"",
 			form:"",
 			provinceName:"",
@@ -325,7 +344,7 @@
 				values: ["未婚", "已婚"],
 				className: 'slot2',
 			}],
-			addressProvince: '',
+			addressProvince: {},
 			addressCity: '',
             addressRegion: '',
             currentP:'',//选中省
@@ -335,6 +354,8 @@
 			defaultProvince:"",
 			defaultCity:"",//默认市
 			defaultRegion:"",//默认地区
+			hasDefaultAddr:"",//判断
+			areaId:'',//县级ID
 		}),
 		methods: {
 			open(picker) {
@@ -349,46 +370,87 @@
 			onMChange(picker, values) {
 				this.marriage1 = values[0];
 			},
+			submitConfirm() {
+			   	   MessageBox.confirm('确定执行此操作?').then(action => {
+			   	   	  let formData = new FormData();
+			   	   	  formData.append('userId', this.userId);
+			   	   	  formData.append('areaId', this.areaId);
+			   	   	  formData.append('addrId', this.addrId);
+			   	   	  formData.append('photoId', this.photoId);
+			   	   	  formData.append('birthday', this.birthday);
+			   	   	  formData.append('sex', this.sex);
+			   	   	  formData.append('userName', this.userName);
+			   	   	  formData.append('birthday', this.birthday);
+			   	   	  formData.append('hobbies', this.interests);
+			   	   	  formData.append('workPlace', this.workUnit);
+			   	   	  formData.append('workName', this.workTit);
+			   	   	  formData.append('marryState', this.marriage);
+			   	   	  formData.append('monthMoney', this.mIncome);
+			   	   	  formData.append('idcard', this.identity);
+			   	   	  formData.append('industry', this.industry);
+			   	   	  formData.append('education', this.teach);
+			   	   	  formData.append('address', this.currentAddr);
+			   	   	   let config = {
+          			  headers:{'Content-Type':'multipart/form-data'}
+				      }
+				      this.axios.post(this.serviceUrl+"app/uploadTouxiang.htm",formData,config).then((res) => {
+				           Toast({
+								          message: '上传成功',
+								          position: 'middle',
+								          className:"tip",
+								        });
+								        this.$router.go(-1);
+				      }, (res) => {
+				         Toast({
+								          message: '上传失败',
+								          position: 'middle',
+								          className:"tip",
+								        });
+				      })
+                      
+			       });
+			   },
 			//地区修改
 			Location(){
-				this.popupVisibleLocation = true;
-//				console.log(this.areaId)
 				this.axios({
-					//					url: this.serviceUrl + "app/goods.htm",
-					url:"http://192.168.8.214:8443/app/getLinkAddr.htm",
+					url: this.serviceUrl + "app/getLinkAddr.htm",
+//					url:"http://192.168.8.214:8443/app/getLinkAddr.htm",
 					method: "POST",
 					data: this.$qs.stringify({
-						areaId: this.areaId, 
+//						areaId: this.areaId, 
 					}),
 				}).then((res) => {
 //                     console.log(res.data)
                        this.form = res.data;
-						this.defaultProvince = res.data.defaultProvince.name;
+                       this.hasDefaultAddr = res.data.hasDefaultAddr;
+                       if(this.hasDefaultAddr){
 						this.defaultCity = res.data.defaultCity.name;
 						this.defaultRegion = res.data.defaultRegion.name;
-						this.addressProvince = res.data.provinces;
-//						console.log(this.addressProvince)
+                       }else{
+                       	  this.defaultProvince = res.data.provinces[0].name;
+                       	 
+                       }
+						 this.addressProvince = res.data.provinces;
+						console.log(this.addressProvince)
 				},  (err)=>  {
 					// 请求失败回调
 					console.log("地址请求错误");
 				});
 			},
-			provincName(index){
-				alert(1)
-				console.log(this.$refs.provinceName) 
-			},
 			//市区修改
-			changeProvince(val){
-//				console.log(val.target.value)
+			changeProvince(index){
+//				console.log(this.$refs.selValueP[index].innerText)
+                 console.log(this.$refs.selValueP[index].id)
+				this.btnP = false;
+				this.defaultProvince = this.$refs.selValueP[index].innerText;
 				this.defaultCity = "请选择",
 				this.defaultRegion ="请选择",
-				this.addrId = val.target.value;
-				this.currentP = val.target.value;
-//				console.log(this.addrId);
+				this.addrId = this.$refs.selValueP[index].id
+				console.log(this.addrId);
 //				console.log(this.currentP);
 				this.axios({
-					//					url: this.serviceUrl + "app/goods.htm",
-					url:"http://192.168.8.214:8443/app/getChildAddr.htm",
+					url: this.serviceUrl + "app/getChildAddr.htm",
+//					url:"http://192.168.8.214:8443/app/getChildAddr.htm",
 					method: "POST",
 					data: this.$qs.stringify({
 						addrId: this.addrId, 
@@ -403,11 +465,14 @@
 					console.log("地址请求错误");
 				});
 			},
-			changeCity(val){
-				this.addrId = val.target.value;
+			changeCity(index){
+				console.log(this.$refs.selValueC[index].innerText)
+				this.btnC = false;
+				this.defaultCity = this.$refs.selValueC[index].innerText;
+				this.addrId = this.$refs.selValueC[index].id;
 				this.axios({
-					//					url: this.serviceUrl + "app/goods.htm",
-					url:"http://192.168.8.214:8443/app/getChildAddr.htm",
+					url: this.serviceUrl + "app/getChildAddr.htm",
+//					url:"http://192.168.8.214:8443/app/getChildAddr.htm",
 					method: "POST",
 					data: this.$qs.stringify({
 						addrId: this.addrId, 
@@ -422,9 +487,16 @@
 					console.log("地址请求错误");
 				});
 			},
-			changeRegion(){
+			changeRegion(index){
+				console.log(this.$refs.selValueA[index].innerText)
+				this.btnA= false;
+				this.defaultRegion = this.$refs.selValueC[index].innerText;
+				this.areaId = this.$refs.selValueA[index].id;
+				console.log(this.areaId)
 //				console.log(this.$refs.selectId)
-//				this.currentAddr = this.$refs.selectId.text
+				this.currentAddr =this.defaultProvince+this.defaultCity+this.defaultRegion
+				console.log(this.$refs.select.value)
+				this.popupVisibleLocation = false;
 			},
    //			出生日期修改
 			handleChange() {
@@ -445,181 +517,50 @@
 			//			性别确认
 			confirmSureSex() {
 				this.sex = this.sex1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						sex: this.sex, //测试用的id
-					}),
-				}).then((res) => {
-                       if (!res.data.state) {
-				          alert('性别修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleSex = false;
 			},
 			//			用户名修改
 			confirmSureUser() {
 				this.username = this.username1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						username: this.username, //测试用的id
-					}),
-				}).then((res) => {
-                       if (!res.data.state) {
-				          alert('用户名修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleUser = false;
 			},
 			//			兴趣爱好修改
 			confirmSureInterests() {
 				this.interests = this.interests1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						interests: this.interests, //测试用的id
-					}),
-				}).then((res) =>{
-                       if (!res.data.state) {
-				          alert('兴趣爱好修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleInterests = false;
 			},
 			//			工作单位修改
 			confirmSureUnit() {
 				this.workUnit = this.workUnit1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						workUnit: this.workUnit,
-					}),
-				}).then((res) => {
-                       if (!res.data.state) {
-				          alert('工作单位修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
-				this.popupVisibleWorkUnit = false;
 			},
 		    	//			工作职称修改
 			confirmSureTit() {
 				this.workTit = this.workTit1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						workTit: this.workTit, 
-					}),
-				}).then((res) => {
-                       if (!res.data.state) {
-				          alert('工作职称修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleWorkTit = false;
 			},
 				//			是否已婚修改
 			confirmSureMarri() {
 				this.marriage = this.marriage1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						marriage: this.marriage, 
-					}),
-				}).then((res) => {
-                       if (!res.data.state) {
-				          alert('婚姻状态修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleMarriage = false;
 			},
 			//			月收入修改
 			confirmSureIncome() {
 				this.mIncome = this.mIncome1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						mIncome: this.mIncome, 
-					}),
-				}).then((res) =>{
-                       if (!res.data.state) {
-				          alert('月收入修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleMIncome = false;
 			},
 			//			身份证修改
 			confirmSureIden() {
 				this.identity = this.identity1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						identity: this.identity, 
-					}),
-				}).then((res) => {
-                       if (!res.data.state) {
-				          alert('身份证修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleIdentity = false;
 			},
 			//			教育程度修改
 			confirmSureIndustry() {
 				this.industry = this.industry1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						industry: this.industry, 
-					}),
-				}).then((res) => {
-                       if (!res.data.state) {
-				          alert('教育程度修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleTeach = false;
 			},
 				//			所在行业修改
 			confirmSureTeach() {
 					this.teach = this.teach1;
-				this.axios.post({
-					//					url: this.serviceUrl + "app/goods.htm",
-					data: this.$qs.stringify({
-						teach: this.teach, 
-					}),
-				}).then((res) => {
-                       if (!res.data.state) {
-				          alert('所在行业修改失败')
-				        }
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
 				this.popupVisibleIndustry = false;
 			},
 			confirmClose() {
@@ -640,7 +581,7 @@
 				this.localPic = url;
 				//			      console.log(this.avater);
 				//			      console.log(this.localPic)
-				this.$router.push('/my/setEdit/imageUpload')
+//				this.$router.push('/my/setEdit/imageUpload')
 			},
 		},
 		mounted: function() {
@@ -650,12 +591,13 @@
 					this.userId = window.sessionStorage.getItem("userId");
 					this.token = window.sessionStorage.getItem("token");
 				this.axios({
-				//					url: this.serviceUrl + "app/goods.htm",
+//				url: this.serviceUrl + "app/personDetail.htm",
 				url:"http://192.168.8.214:8443/app/personDetail.htm",
 				method: "POST",
 				// 请求后台发送的数据
 				data: this.$qs.stringify({
-					userId: 32816, //测试用的id
+//					userId: 32816, //测试用的id
+					userId: this.userId, 
 				}),
 			
 			}).then((res) => {
@@ -841,6 +783,13 @@
 		margin: 0 0 .24rem 0;
 		ul {
 			overflow: hidden;
+			.submitBtn{
+    			
+    			.mint-button--large{
+    				background-color: #4aab2d;
+    				color: #FFFFFF;
+    			}
+			}
 			li {
 				border-bottom: 1px solid #cccccc;
 				overflow: hidden;
@@ -942,10 +891,35 @@
 		font-size: .448rem;
 		width: 30%;
 		max-height:2rem ;
-		overflow: hidden;
+		overflow-y:auto;
+		float: left;
 	}
 	.select option{
 		width: 100%;
 		font-size: .448rem;
 	}
+</style>
+<style>
+	.user-info-name{
+    			vertical-align: top;
+    		}
+    .mint-button--large {
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    height: 100%;
+    /* border: none; */
+    font-size: .576rem;}
+    .mint-button--default {
+    -webkit-box-shadow: 0 0 1px #ffffff;
+}
+.mint-msgbox{
+	font-size: .448rem;
+}
+.mint-msgbox-title{
+	font-size: .448rem;
+}
+.mint-msgbox-btn{
+    font-size: .448rem;	
+}
 </style>

@@ -58,8 +58,8 @@
 					this.userId = window.sessionStorage.getItem("userId");
 					this.token = window.sessionStorage.getItem("token");
 				   this.axios({
-						//					url: this.serviceUrl + "app/goods.htm",
-						url:"http://192.168.8.214:8443/app/updatePassword.htm",
+						url: this.serviceUrl + "app/updatePassword.htm",
+//						url:"http://192.168.8.214:8443/app/updatePassword.htm",
 						method: "POST",
 						// 请求后台发送的数据
 						data: this.$qs.stringify({
@@ -72,6 +72,7 @@
 						// 请求成功回调
 						console.log(JSON.stringify(res.data));
 						this.msg = res.data;
+						this.$router.go(-1);
 						//console.log(this.msg.companyArray)
 					}, function(res) {
 						// 请求失败回调

@@ -33,9 +33,9 @@
 					<div class=""v-for="(specList,index) in msg.spec_list" :key="specList.key" >
 						<p class="clearfix">
 						   <span class="tit" v-text="specList.specname">品牌</span>
-						   <span v-for="(specKind,index) in specList.specvalues":key="specKind.key">
+						   <p v-for="(specKind,index) in specList.specvalues":key="specKind.key">
 						   	   <span class="tit-content" v-text="specKind">品牌</span>
-						   </span>		
+						   </p>		
 					    </p>
 					</div>
 										
@@ -273,7 +273,7 @@
 		height: auto;
 	}
 	
-	.matDetail {
+	.matDetails {
 		background-color: #EEEEEE;
 		.app-content {
 			position: fixed;
@@ -376,9 +376,6 @@
 				width: 2.88rem;
 				float: left;
 				color: #666666;
-			}
-			.tit-content {
-				float: left;
 			}
 			.see-more {
 				color: #999999;

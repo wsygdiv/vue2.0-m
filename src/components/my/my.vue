@@ -14,7 +14,7 @@
     	 	   <router-link class="iconfont" to="/my/list" tag="a"style="float: right;margin: .816rem .12rem 0 0;color: #FFFFFF;">&#xe602;</router-link>
     	 </div>
     </div>
-		<div class="btn-box">
+		<!--<div class="btn-box">
 			<ul>
 				<router-link to="/hotNew" tag="li">
 					<span class="iconfont btn-icon">&#xe74e;</span>
@@ -32,7 +32,7 @@
 					<span class="num-msg"v-text="msg.orderPayCount">3</span>
 				</router-link>
 			</ul>
-		</div>
+		</div>-->
 		<div class="user-info">
 			  <ul>
 			  	<li>
@@ -64,7 +64,7 @@
 			  		<span class="iconfont iconO fl">&#xe62f;</span>
 			  		<span class="user-info-name">我的消息</span>
 			  		<router-link to="/my/setEdit/myMessege"class="iconfont"tag="a">
-			  			<span class="iconfont btn-icon"style="float: right;font-size: .672rem;margin-right:.12rem;">&#xe74e;</span>
+			  			<span class="iconfont btn-icon"style="float: right;font-size: .672rem;margin-right:.24rem;">&#xe74e;</span>
 						<span class="num-msg"v-text="msg.message">3</span>
 			  		</router-link>
 			  	</li>
@@ -94,7 +94,7 @@
 					method: "POST",
 					// 请求后台发送的数据
 					data:  this.$qs.stringify({
-						userId:32769,//测试用的id
+						userId:this.userId,//测试用的id
 					}),					
 				}).then((res) =>{
 					// 请求成功回调
@@ -181,7 +181,7 @@
         & >.num-msg{
         	position: absolute;
         	top: 0.1rem;
-        	right: 1.1rem;
+        	right: .25rem;
         	width: 0.6rem;
         	height: 0.6rem;
         	font-size: 0.5rem;

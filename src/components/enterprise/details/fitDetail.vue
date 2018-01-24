@@ -19,7 +19,7 @@
 				<ul>
 					<li class="clearfix">
 						<div class="enterprise-img fl">
-							<img :src="msg.logo" /><br/>
+							<img :src="msg.logo" class="pic"/><br/>
 						</div>
 						<div class="company fl">
 							<h3>{{msg.name}}</h3>

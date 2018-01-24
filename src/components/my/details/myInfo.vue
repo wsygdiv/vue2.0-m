@@ -11,9 +11,9 @@
     	</div>
     	
     	 <div class="my-name">
-    	 	   <span class="user-contain"style=""><img src="../../../assets/user.png"/></span>
+    	 	   <span class="user-contain"style=""><img :src="msg.touxiang"/></span>
     	 	   <div class="my-name-info" style="">
-    	 	   	   <h3>Alisa</h3>  	 	   	   
+    	 	   	   <h3 v-text="msg.userName">Alisa</h3>  	 	   	   
     	 	   </div>     	 
     	 </div>
     </div>
@@ -27,22 +27,22 @@
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconG fl"></span>
-			  		<span class="user-info-name"><span class="user-tit">用户名</span><span class="price">Ali</span></span>
+			  		<span class="user-info-name"><span class="user-tit">用户名</span><span class="price"v-text="msg.userName">Ali</span></span>
 			  		
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconG fl"></span>
-			  		<span class="user-info-name"><span class="user-tit">出生日期</span><span class="price">0.00元</span></span>
+			  		<span class="user-info-name"><span class="user-tit">出生日期</span><span class="price"v-text="msg.birthday">0.00元</span></span>
 			  		
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconG fl"></span>
-			  		<span class="user-info-name"><span class="user-tit">性别 </span><span class="price">0.00元</span></span>
+			  		<span class="user-info-name"><span class="user-tit">性别 </span><span class="price"v-text="msg.sex">0.00元</span></span>
 			  		
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconG fl"></span>
-			  		<span class="user-info-name"><span class="user-tit">兴趣爱好</span><span class="price">0.00元</span></span>
+			  		<span class="user-info-name"><span class="user-tit">兴趣爱好</span><span class="price"v-text="msg.hobbies">0.00元</span></span>
 			  		
 			  	</li>
 			  </ul>
@@ -55,7 +55,7 @@
 		name: "myInfo",
 		props: ['serviceUrl'],
 		data: () => ({
-			
+			msg:''
 		}),
 		methods:{
 			back() {
@@ -63,37 +63,30 @@
 			   },
 		},
 		mounted: function() {
-      if(!window.sessionStorage.getItem("userId")) {
+     		 if(!window.sessionStorage.getItem("userId")) {
 					this.$router.push("/login");
 				} else {
 					this.userId = window.sessionStorage.getItem("userId");
 					this.token = window.sessionStorage.getItem("token");
-			beforeCreate: {
-				this.$http({
-//					url: this.serviceUrl + "app/goods.htm",
+			
+				this.axios({
+					url: this.serviceUrl + "app/personMessage.htm",
+//					url:"http://192.168.8.214:8443/app/basicMessage.htm",
 					method: "POST",
 					// 请求后台发送的数据
-					params: {
-						id: this.$route.params.goodsId,
-						data: {
-
-						}
-					},
-					// 设置请求头
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
+					data:  this.$qs.stringify({
+						userId:this.userId,//测试用的id
+					}),					
+				}).then((res) =>{
 					// 请求成功回调
 					console.log(JSON.stringify(res.data));
 					this.msg = res.data;
 					//console.log(this.msg.companyArray)
-				}, function(res) {
+				}, (err)=> {
 					// 请求失败回调
 					console.log("error from matDetail");
 				});
-			}
-		}
+				}
 		}
 	}
 </script>
@@ -114,7 +107,6 @@
 			text-align: center;
 			padding: .06rem;
 			border-radius: 50%;
-			background-color: #FFFFFF;
 			img{
 				width: 2.3rem;
 			height: 2.3rem;			
@@ -225,6 +217,7 @@
     			display: inline-block;
     			height: .88rem;
     			line-height: .88rem;
+    			float: left;
     		}
     		.user-info-name{
     			vertical-align: top;
