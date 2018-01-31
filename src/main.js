@@ -19,6 +19,9 @@ import axios from 'axios'
 Vue.prototype.axios  = axios
 import Transform from 'alloyfinger/transformjs/transform'
 
+var VueTouch = require('vue-touch')
+Vue.use(VueTouch, {name: 'v-touch'})
+
 Vue.use(Transform, {
   AlloyFinger
 })

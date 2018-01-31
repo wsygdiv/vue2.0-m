@@ -93,10 +93,11 @@
 <style lang="scss" scoped>
 @import "./../../../css/unit/common";
 .my-header{
-	
+	width:100%;
 	color: #FFFFFF;
 	text-align:center;
 	padding:.32rem;	
+	background-size:cover;
 	background: url(../../../assets/bgImg.png) no-repeat center left;
 	.my-name{
 		overflow:hidden;
@@ -162,7 +163,7 @@
         & >.num-msg{
         	position: absolute;
         	top: 0.1rem;
-        	right: 1.1rem;
+        	right: .21rem;
         	width: 0.6rem;
         	height: 0.6rem;
         	font-size: 0.5rem;

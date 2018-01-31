@@ -85,7 +85,8 @@ export default {
     },
     infiniteHandler($state,num) {
       // console.log(this.tabFlag);
-      // console.log(num);
+         console.log(num);
+         console.log(this.msg[num].currentPage)
       if(this.msg[num].currentPage >= this.msg[num].totalPage){
         $state.complete();
       } else {

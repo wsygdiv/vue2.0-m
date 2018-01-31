@@ -41,9 +41,11 @@
 			  		<span class="price"><span v-text="msg.balance"></span>元</span>
 			  	</li>
 			  	<li>
-			  		<span class="iconfont iconG fl">&#xe636;</span>
-			  		<span class="user-info-name">意向金</span>
-			  		<span class="price"><span v-text="msg.intentionalGold"></span>元</span>
+			  		<router-link to="/my/setEdit/bigImage">
+			  			<span class="iconfont iconG fl">&#xe636;</span>
+				  		<span class="user-info-name">意向金</span>
+				  		<span class="price"><span v-text="msg.intentionalGold"></span>元</span>
+			  		</router-link>
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconOO fl">&#xe604;</span>
@@ -89,8 +91,8 @@
 					this.token = window.sessionStorage.getItem("token");
 			
 				this.axios({
-					url: this.serviceUrl + "app/personMessage.htm",
-//					url:"http://124.204.40.11:8088/app/personMessage.htm",
+//					url: this.serviceUrl + "app/personMessage.htm",
+					url:"http://124.204.40.11:8088/app/personMessage.htm",
 					method: "POST",
 					// 请求后台发送的数据
 					data:  this.$qs.stringify({
@@ -100,6 +102,9 @@
 					// 请求成功回调
 //					console.log(JSON.stringify(res.data));
 					this.msg = res.data;
+					if(this.msg.message>=99){
+						this.msg.message = 99;
+					}
 					//console.log(this.msg.companyArray)
 				}, (err)=> {
 					// 请求失败回调
@@ -227,7 +232,7 @@
        .num-msg{
         	position: absolute;
         	top: 0.1rem;
-        	right: 1.1rem;
+        	right: .2rem;
         	width: 0.6rem;
         	height: 0.6rem;
         	font-size: 0.5rem;

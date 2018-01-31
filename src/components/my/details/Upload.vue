@@ -34,12 +34,10 @@ export default {
       file: '',
       isAndroid: false,
       isIphone: false,
-     
     }
   },
   methods: {
     upload: function () {
-    	
       this.$indicator.open()
       let formData = new FormData()
       let file = this.$refs.file.files[0]
@@ -54,19 +52,20 @@ export default {
         return
       }
       formData.append('photo', file)
-//    this.imgSrc = this.$refs.file.value
-      console.log(this.imgSrc)
-      console.log(this.$refs.file.value)
+      var avater = this.$refs.file.value
+      var photoId = "";
+//    console.log(this.$refs.file.value)
       let config = {
             headers:{'Content-Type':'multipart/form-data'}
       }
       this.axios.post(this.serviceUrl+"app/uploadTouxiang.htm" , formData,config).then((res) => {
-      	this.imgSrc = res.data.imgUrl
-      	console.log(this.imgSrc)
+      	avater = res.data.imgUrl
       	console.log(res.data)
-        this.$emit('pic', res.data.filePath)
-        if (res.data.fileSrc) {
-          this.$emit('poster', res.data.fileSrc)
+        photoId = res.data.photoId
+        this.$emit('pic',avater)
+         this.$emit('id',photoId)
+        if (res.data.imgUrl) {
+          this.$emit('poster', res.data.imgUrl)
         }
         this.$refs.file.value = ''
         this.$indicator.close()

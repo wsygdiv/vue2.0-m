@@ -36,6 +36,7 @@ import MyInfoEdit from "@/components/my/details/myInfoEdit";
 import NewText from "@/components/my/details/newText";
 import SetPwd from "@/components/my/details/setPwd";
 import ImageUpload from "@/components/my/details/imageUpload";
+import BigImage from "@/components/my/details/bigImage";
 // - 我的页面（个人中心） End
 
 // - 搜索页面 Start
@@ -171,6 +172,10 @@ export default new VueRouter({
     {
       path: "/my/setEdit/myMessege",/*增加个人中心我的消息路由*/
       component: MyMessege,
+    },
+    {
+      path: "/my/setEdit/bigImage",/*增加个人中心路由*/
+      component: BigImage,
     },
     {
       path: "/hotNew",
