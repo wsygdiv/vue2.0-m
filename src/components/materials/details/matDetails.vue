@@ -7,9 +7,13 @@
 				<div class="banner cont">
 					<swiper class="banner-banner" :options="matBanner">
 						<swiper-slide class="banner-list" v-for="(bannerUrl,index) in msg.goods_photos" :key="bannerUrl.key" :style="{backgroundImage: 'url(' + bannerUrl + ')'}">
+						
 						</swiper-slide>
 						<div class="swiper-pagination" slot="pagination"></div>
 					</swiper>
+					<div class="shareIcon">
+							分享
+						</div>
 				</div>
 			</div>
 			<!-- banner End 
@@ -131,6 +135,7 @@
 			layout: 'iconmore',
 			matBanner: {
 				notNextTick: true,
+//				autoplay: false,
 				autoplay: 4000,
 				direction: 'horizontal',
 				grabCursor: true,
@@ -302,6 +307,15 @@
 					width: 12rem;
 					display: block;
 					height: $height;
+				}
+				.shareIcon{
+					    position: absolute;
+					    right: 5px;
+					    background: red;
+					    font-size: .448rem;
+					span{
+						display: inline-block;
+					}
 				}
 				.banner-banner {
 					width: 100%;

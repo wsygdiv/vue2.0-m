@@ -4,7 +4,7 @@
 		<slot name="app-header"></slot>
 		<div class="app-content">
 			<div class="tab">
-				<ul class="tab-box">
+				<ul class="tab-box"ref="tabBox":class="tabFlag >= 5?'tabLeft':''">
 					<li v-for="(tabListBox,index) in msg" :class="'tab-list' + ' ' + (index === tabFlag ? 'cur' : '')" :key="index" v-text="tabListBox.className" @click="tab(index)">
 					</li>
 				</ul>
@@ -63,7 +63,7 @@
 			msg: [],
 			pageSize: 10, //每页 数据个数
 			tabFlag: 0, //切换swiper 的index  同时也是请求的第几个（类别）数据
-
+            activeIndex:'',
 			onTabSwiper: {
 				notNextTick: true,
 
@@ -72,12 +72,19 @@
 				onSlideChangeEnd: function(swiper) {
 					swiper.update();
 				},
+				onSlideChangeStart:function(swiper){
+					console.log(swiper.activeIndex);
+					if(swiper.activeIndex == 5){
+						this.activeIndex = swiper.activeIndex;
+					}
+				}
 			},
 		}),
 		computed: {
 			onTabSwiperFn() {
 				return this.$refs.onTabSwiper.swiper
 			},
+			
 		},
 		methods: {
 			tab(num) {
@@ -173,6 +180,9 @@
 		overflow-x: auto;
 		background: #fff;
 		height: $tabHeight;
+		.tabLeft{
+			right: 0;
+		}
 		.tab-box {
 			position: absolute;
 			z-index: 5;

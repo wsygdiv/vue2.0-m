@@ -87,14 +87,14 @@
 							<a class="inform-btn J_delete"@click="infoLi = 1 ">删除</a>
 							<p class="inform-time">2017-11-25 09:09:09</p>
 							<div class="reply-textarea hid"v-show="replyFlag">
-								<input class='reply-text'ref="replyText"name="replyT"value="text1"v-model="text1">
+								<input class='reply-text'ref="replyText"name="replyT"v-model="book.sys_content">
 								<a class='send-btn' href='javascript:;'@click="sendReply">发送</a>
 							</div>
 							<div class="re-box"ref="reBox">
-								 <div class="reply-box">
-								    <p class="reply-con">回复<span class="reply-ts">XXX</span>：回复回复回复回复回复回复回复回复</p>
-							    	<p class="reply-ts">2017-12-12 09:09:09</p>
-						   	</div>
+								<div class="reply-box"v-for="(item,index) in msg.messageList":key="item.key">
+								    <p class="reply-con">回复<span class="reply-ts">{{item.fromUser}}</span>：<span>{{item.sys_content}}</span></p>
+							    	<p class="reply-ts">{{item.sys_date}}</p>
+						   	     </div>
 							</div>
 						</li>
 						
@@ -137,13 +137,19 @@
 			text1:'',
 			//  currentPage:'',
 			//  totalPage:''
+			book:{//存一个json来接收数据
+						sys_id:0,//私信id
+						fromUser:'',//发送方
+						sys_date:'',//回复时间
+						sys_content:''//私信内容
+					}
 		}),
 		computed: {},
 		methods: {
 			sendReply(){
 //				this.axios({
 //						url: this.serviceUrl + "app/sys_message.htm",
-//						//											url:"http://192.168.8.183:8088/app/sys_message.htm",
+//						//url:"http://192.168.8.183:8088/app/sys_message.htm",
 //						method: "POST",
 //						data: this.$qs.stringify({
 //							token: this.token,
@@ -161,20 +167,18 @@
 //									}
 //						console.log("请求错误");
 //					});
-				 let con = this.$refs.replyText[0].value;
-				 console.log(con)
-				 console.log(this.$refs.reBox[0])
-            	if(con!=""&&con!=undefined&&con!=null){
-            		var replyBox = '<div class="reply-box">'+
-			        	'<p class="reply-con">回复<span class="reply-ts">'+''+'</span>：'+con+'</p>'+
-			        	'<p class="reply-ts">'+'2017-12-12 09:09:09'+'</p>'+
-			        	'</div>';
-			        	console.log(replyBox)
-            		this.$refs.reBox[0].append(replyBox);
-			          con = "";
-//			        $(this).parents(".inform-list").children(".reply-textarea").hide();
-               this.replyFlag = false;
-               console.log(this.$refs.reBox[0])
+//				 let con = this.$refs.replyText[0].value;
+//				 console.log(con)
+//				 let con = this.text1;
+//				 console.log(con)
+				 console.log(this.msg.messageList.length)
+            	if(this.book.sys_content!=""&&this.book.sys_content!=undefined&&this.book.sys_content!=null){
+            		this.book.sys_id=this.msg.messageList.length+1;
+//          		this.book.sys_content = con;
+					this.msg.messageList.push(this.book);
+					console.log(this.msg.messageList)
+			        this.book = "";
+                    this.replyFlag = false;
             	}else{
             		alert("发送内容不能为空!");
             	}
@@ -186,7 +190,7 @@
 					var that = this;
 					this.axios({
 						url: this.serviceUrl + "app/sys_message.htm",
-						//											url:"http://192.168.8.183:8088/app/sys_message.htm",
+						//	url:"http://192.168.8.183:8088/app/sys_message.htm",
 						method: "POST",
 						data: this.$qs.stringify({
 							token: this.token,
@@ -204,7 +208,7 @@
 				} else if(this.tabFlag == 2) {
 					this.axios({
 						url: this.serviceUrl + "app/sys_doc.htm",
-						//											url:"http://192.168.8.183:8088/app/sys_doc.htm",
+						//url:"http://192.168.8.183:8088/app/sys_doc.htm",
 						method: "POST",
 						data: this.$qs.stringify({
 							token: this.token,
