@@ -195,7 +195,7 @@
 						background-color: $green;
 					}
 					.mtS /deep/ .mint-switch-input:checked+.mint-switch-core::after {
-						-webkit-transform: translateX(20px);
+						-webkit-transform: translateX(42px);
 						transform: translateX(42px);
 					}
 					.mtS /deep/ .mint-switch-core::after {

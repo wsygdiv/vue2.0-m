@@ -37,7 +37,7 @@
 			  	</li>
 			  	<li>
 			  		<span class="iconfont iconG fl"></span>
-			  		<span class="user-info-name"><span class="user-tit">性别 </span><span class="price"v-text="msg.sex">0.00元</span></span>
+			  		<span class="user-info-name"><span class="user-tit">性别 </span><span class="price"v-text="sex">0.00元</span></span>
 			  		
 			  	</li>
 			  	<li>
@@ -55,7 +55,8 @@
 		name: "myInfo",
 		props: ['serviceUrl'],
 		data: () => ({
-			msg:''
+			msg:'',
+			sex:'',
 		}),
 		methods:{
 			back() {
@@ -70,7 +71,7 @@
 					this.token = window.sessionStorage.getItem("token");
 			
 				this.axios({
-					url: this.serviceUrl + "app/personMessage.htm",
+					url: this.serviceUrl + "app/basicMessage.htm",
 //					url:"http://192.168.8.214:8443/app/basicMessage.htm",
 					method: "POST",
 					// 请求后台发送的数据
@@ -81,6 +82,13 @@
 					// 请求成功回调
 					console.log(JSON.stringify(res.data));
 					this.msg = res.data;
+					if(res.data.sex == 0) {
+						this.sex = "男";
+					} else if(res.data.sex == 1) {
+						this.sex = "女";
+					} else {
+						this.sex = "保密";
+					}
 					//console.log(this.msg.companyArray)
 				}, (err)=> {
 					// 请求失败回调
@@ -97,8 +105,8 @@
 	color: #FFFFFF;
 	text-align:center;
 	padding:.32rem;	
-	background-size:cover;
 	background: url(../../../assets/bgImg.png) no-repeat center left;
+	background-size:cover;
 	.my-name{
 		overflow:hidden;
 		text-align:center;
@@ -108,11 +116,12 @@
 			text-align: center;
 			padding: .06rem;
 			border-radius: 50%;
+			display: inline-block;
 			img{
-				width: 2.3rem;
-			height: 2.3rem;			
 			vertical-align: middle;			
 			border-radius: 50%;
+			width: 100%;
+			height: auto;
 			}
 		}
 		.my-name-info{
@@ -221,7 +230,6 @@
     			float: left;
     		}
     		.user-info-name{
-    			vertical-align: top;
     			.user-tit{
     				width: 2.5rem;
     			    display: inline-block;

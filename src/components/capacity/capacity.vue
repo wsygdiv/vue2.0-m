@@ -6,7 +6,9 @@
 		<div class="capacity-header">
 			<swiper class="enterprise-count" :options="bannerSwiper1">
 				<swiper-slide v-for="(enterpriseList,index) in msg.companyArray" :key="enterpriseList.key" class="enterprise-list">
-					<div class="pic1" @click="tab(index)"><img :src="enterpriseList.logo" alt="" :style="{height: '1.224rem',width:'100%'}"></div>
+					<div class="pic1" @click="tab(index)">
+						<img :src="enterpriseList.logo" alt="" :style="{height: '1.224rem',width:'100%'}">
+					</div>
 				</swiper-slide>
 			</swiper>
 		</div>

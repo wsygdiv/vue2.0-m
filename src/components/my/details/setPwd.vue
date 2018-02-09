@@ -11,9 +11,7 @@
 				<div class="">
 					请为您的账号
 				</div>
-				<div class="user-counter">
-					111112333
-				</div>
+				<div class="user-counter"v-text="msg.userName"></div>
 				<div class="setCounter">
 					设置一个新密码
 				</div>
@@ -34,7 +32,29 @@
 		data: () => ({
 			password: '', // 密码
 			confirmPassword: '', // 确认密码
+			msg:'',
 		}),
+		mounted: function() {
+					this.userId = window.sessionStorage.getItem("userId");
+					this.token = window.sessionStorage.getItem("token");
+				this.axios({
+//					url: this.serviceUrl + "app/personMessage.htm",
+					url:"http://124.204.40.11:8088/app/personMessage.htm",
+					method: "POST",
+					// 请求后台发送的数据
+					data:  this.$qs.stringify({
+						userId:this.userId,//测试用的id
+					}),					
+				}).then((res) =>{
+					// 请求成功回调
+//					console.log(JSON.stringify(res.data));
+					this.msg = res.data;
+					//console.log(this.msg.companyArray)
+				}, (err)=> {
+					// 请求失败回调
+					console.log("error from matDetail");
+				});
+		},
 		methods: {
 			back() {
 				this.$router.go(-1);

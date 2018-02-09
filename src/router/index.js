@@ -27,16 +27,16 @@ import DiaryDetails from "@/components/diary/details/diaryDetails";//  √
 // - 日记页面 End
 
 // - 我的页面（个人中心） Start
-import My from "@/components/my/my";
-import MyInfo from "@/components/my/details/myInfo";
-import SetInfo from "@/components/my/details/setInfo";
-import MyMessege from "@/components/my/details/myMessege";
-import SetAddr from "@/components/my/details/setAddr";
-import MyInfoEdit from "@/components/my/details/myInfoEdit";
-import NewText from "@/components/my/details/newText";
-import SetPwd from "@/components/my/details/setPwd";
-import ImageUpload from "@/components/my/details/imageUpload";
-import BigImage from "@/components/my/details/bigImage";
+import My from "@/components/my/my";//个人中心二级
+import MyInfo from "@/components/my/details/myInfo";//个人信息展示
+import SetInfo from "@/components/my/details/setInfo";//设置
+import MyMessege from "@/components/my/details/myMessege";//消息
+import SetAddr from "@/components/my/details/setAddr";//添加新地址
+import MyInfoEdit from "@/components/my/details/myInfoEdit";//编辑信息
+import NewText from "@/components/my/details/newText";//新消息
+import SetPwd from "@/components/my/details/setPwd";//更改密码
+import ImageUpload from "@/components/my/details/imageUpload";//上传剪裁图片
+import BigImage from "@/components/my/details/bigImage";//放大图片
 // - 我的页面（个人中心） End
 
 // - 搜索页面 Start
@@ -142,31 +142,31 @@ export default new VueRouter({
       component: My,
     },
     {
-      path: "/my/list",/*增加个人中心路由*/
+      path: "/my/list",/*增加个人中心我的信息*/
       component: MyInfo,
     },
     {
-      path: "/my/setEdit",/*增加个人中心路由*/
+      path: "/my/setEdit",/*增加个人中心设置路由*/
       component: SetInfo,
     },
      {
-      path: "/my/list/details/setAddr",/*增加个人中心路由*/
+      path: "/my/list/details/setAddr",/*增加个人中心添加地址路由*/
       component: SetAddr,
     },
     {
-      path: "/my/list/details",/*增加个人中心路由*/
+      path: "/my/list/details",/*增加个人中心编辑信息路由*/
       component: MyInfoEdit,
     },
     {
-      path: "/my/setEdit/newText",/*增加个人中心路由*/
+      path: "/my/setEdit/newText",/*增加个人中心新消息路由*/
       component: NewText,
     },
     {
-      path: "/my/setEdit/setPwd",/*增加个人中心路由*/
+      path: "/my/setEdit/setPwd",/*增加个人中心设置密码路由*/
       component: SetPwd,
     },
     {
-      path: "/my/setEdit/imageUpload",/*增加个人中心路由*/
+      path: "/my/setEdit/imageUpload",/*增加个人中心上传剪裁路由*/
       component: ImageUpload,
     },
     {
@@ -174,7 +174,7 @@ export default new VueRouter({
       component: MyMessege,
     },
     {
-      path: "/my/setEdit/bigImage",/*增加个人中心路由*/
+      path: "/my/setEdit/bigImage",/*增加个人中心放大图片路由*/
       component: BigImage,
     },
     {
@@ -259,7 +259,7 @@ export default new VueRouter({
     },
 
   ],
-  linkActiveClass: 'cur'
+linkActiveClass: 'cur'
 });
 
 

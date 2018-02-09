@@ -8,7 +8,6 @@
     <input class="file"name="photo" v-if="isIphone && !isImage" type="file" :accept="videoAccept" @change="upload" ref="file" multiple/>
   </div>
 </template>
-
 <script>
 /**
  * 参数
@@ -68,6 +67,7 @@ export default {
           this.$emit('poster', res.data.imgUrl)
         }
         this.$refs.file.value = ''
+        alert("上传成功")
         this.$indicator.close()
       }, (res) => {
         this.$indicator.close()

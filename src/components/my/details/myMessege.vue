@@ -17,30 +17,32 @@
 						<span v-text="tabListBox"></span>
 						<span class="remind" ref="remind" v-if="remindFlag"></span>
 					</li>
-					<li>
-
-					</li>
 				</ul>
 			</div>
 			<!-- Tab Box -->
-			<div class="on-tab" ref="onTabSwiper" v-for="(list,index) in msg" :key="list.key">
-				<!--系统消息-->
-				<div class="on-tab-list" v-show="tabFlag == 0">
+			<div class="on-tab" ref="onTabSwiper" v-if="msgNot!=null">
+				<!--系统通知-->
+				<div class="on-tab-list" v-if="tabFlag == 0">
 					<ul class="on-tab-list-box">
 						<!-- Main List -->
-						<router-link :to="'details/'" append tag="li" class="on-tab-list-box-list" v-for="(sysMes,index) in msg.messageList" :key="sysMes.key">
-							<div class="title">
-								<span v-html="sysMes.sys_title"></span>
-								<span class="date" v-html="sysMes.sys_date"></span>
-							</div>
-							<div class="content" v-html="sysMes.sys_content"></div>
-						</router-link>
-						<!-- Main List 为空的时候 -->
-						<li class="cue-box" v-if="list.length == 0">
-							<div class="cue">暂无数据...</div>
+						<li v-for="(sysMes,index) in msgNot.messageList" :key="index.key">
+							<router-link :to="'details/'" append tag="div" class="on-tab-list-box-list">
+								<div class="leftDot">
+									<span class="dotMes"></span>
+								</div>
+								<div class="rightContent">
+									<div class="title">
+										<span v-html="sysMes.sys_title" class="tit-content"></span>
+										<span class="date" v-html="sysMes.sys_date"></span>
+									</div>
+									<div class="content" v-html="sysMes.sys_content"></div>
+								</div>
+
+							</router-link>
 						</li>
+
 						<!-- Main List 加载更多 -->
-						<infinite-loading @infinite="infiniteHandler0($event)" spinner="circles" v-if="list.length != 0">
+						<infinite-loading @infinite="infiniteHandler0($event)" spinner="circles" v-if="msgNot.length != 0">
 							<!-- 加载更多却没有数据的时候 -->
 							<div class="no-more" slot="no-more">
 								该分类下没有更多了...
@@ -51,23 +53,19 @@
 						</infinite-loading>
 					</ul>
 				</div>
-				<!--社区消息-->
-				<div class="on-tab-list" v-show="tabFlag == 2">
+				<!--系统公告-->
+				<div class="on-tab-list" v-show="tabFlag == 1">
 					<ul class="on-tab-list-box">
 						<!-- Main List -->
 						<router-link :to="'details/'" append tag="li" class="on-tab-list-box-list" v-for="(sysNot,index) in msg.docList" :key="sysNot.key">
 							<div class="title">
-								<span v-text="sysNot.doc_title"></span>
+								<span v-text="sysNot.doc_title"></span>12333
 								<span class="date" v-text="sysNot.doc_click"></span>
 							</div>
 							<div class="content" v-text="sysNot.doc_description"></div>
 						</router-link>
-						<!-- Main List 为空的时候 -->
-						<li class="cue-box" v-for="(sysNot,index) in msg.docList" :key="sysNot.key" v-if="index == 1">
-							<div class="cue" v-if="sysNot.length == 0">暂无数据...</div>
-						</li>
 						<!-- Main List 加载更多 -->
-						<infinite-loading @infinite="infiniteHandler1($event)" spinner="circles" v-if="list.length != 0">
+						<infinite-loading @infinite="infiniteHandler1($event)" spinner="circles" v-if="msgNot.length != 0">
 							<!-- 加载更多却没有数据的时候 -->
 							<div class="no-more" slot="no-more">
 								该分类下没有更多了...
@@ -79,29 +77,30 @@
 					</ul>
 				</div>
 				<!--私信-->
-				<div class="on-tab-list" v-show="tabFlag == 4">
+				<div class="on-tab-list" v-show="tabFlag ==2">
 					<ul class="on-tab-list-box">
-						<li class="inform-list"ref="infoLi"v-if="infoLi ==0 ">
+						<!--<li class="inform-list"ref="infoLi"v-if="infoLi ==0 "v-for="(mesList,index) in msgMes.messageList":key="mesList.key">-->
+						<li class="inform-list" v-if="infoLiX == 0 ">
 							<div class="inform-con">1.你好你好你好！</div>
-							<a class="inform-btn J_reply" href="javascript:;"@click="replyFlag =!replyFlag">回复<span class="iconfont">&#xe70c;</span></a>
-							<a class="inform-btn J_delete"@click="infoLi = 1 ">删除</a>
+							<a class="inform-btn J_reply" href="javascript:;" @click="reply(index)">回复<span class="iconfont">&#xe70c;</span></a>
+							<a class="inform-btn J_delete" @click="infoLi">删除</a>
 							<p class="inform-time">2017-11-25 09:09:09</p>
-							<div class="reply-textarea hid"v-show="replyFlag">
-								<input class='reply-text'ref="replyText"name="replyT"v-model="book.sys_content">
-								<a class='send-btn' href='javascript:;'@click="sendReply">发送</a>
+							<div class="reply-textarea" v-show="replyFlag">
+								<input class='reply-text' ref="replyText" name="replyT" v-model="text">
+								<a class='send-btn' href='javascript:;' @click="sendReply">发送</a>
 							</div>
-							<div class="re-box"ref="reBox">
-								<div class="reply-box"v-for="(item,index) in msg.messageList":key="item.key">
-								    <p class="reply-con">回复<span class="reply-ts">{{item.fromUser}}</span>：<span>{{item.sys_content}}</span></p>
-							    	<p class="reply-ts">{{item.sys_date}}</p>
-						   	     </div>
+							<div class="re-box" ref="reBox">
+								<div class="reply-box" v-for="(item,index) in msgMes.messageList" :key="item.key">
+									<p class="reply-con">回复<span class="reply-ts" v-text="item.fromUser">xxx</span>：<span v-text="item.sys_content"></span></p>
+									<p class="reply-ts" v-text="item.sys_date"></p>
+								</div>
 							</div>
 						</li>
-						
+
 						<!-- Main List 为空的时候 -->
-						<li class="cue-box" v-for="(sysNot,index) in msg.docList" :key="sysNot.key" v-if="index == 1">
+						<!--<li class="cue-box" v-for="(sysNot,index) in msg.docList" :key="sysNot.key" v-if="index == 1">
 							<div class="cue" v-if="sysNot.length == 0">暂无数据...</div>
-						</li>
+						</li>-->
 						<!-- Main List 加载更多 -->
 						<!--<infinite-loading @infinite="infiniteHandler1($event)" spinner="circles" v-if="list.length != 0">-->
 						<!-- 加载更多却没有数据的时候 -->
@@ -120,6 +119,7 @@
 </template>
 <script>
 	import InfiniteLoading from 'vue-infinite-loading'
+	import { MessageBox } from 'mint-ui';
 	export default {
 		name: "myMessege",
 		components: {
@@ -128,60 +128,71 @@
 		props: ['serviceUrl'],
 		data: () => ({
 			msg: [],
-			titMessege: ["系统通知", "社区消息", "系统公告", "活动消息", "私信"],
+			titMessege: ["系统通知", "系统公告", "私信"],
 			pageSize: 10, //每页 数据个数
 			tabFlag: 0, //切换swiper 的index  同时也是请求的第几个（类别）数据
 			remindFlag: true,
-			replyFlag:false,
-			infoLi:0,
-			text1:'',
+			replyFlag: false,
+			infoLiX: 0,
+			text: '',
+			msgNot: '',
+			msgMes: "",
 			//  currentPage:'',
 			//  totalPage:''
-			book:{//存一个json来接收数据
-						sys_id:0,//私信id
-						fromUser:'',//发送方
-						sys_date:'',//回复时间
-						sys_content:''//私信内容
-					}
+			book: { //存一个json来接收数据
+				sys_id: 0, //私信id
+				fromUser: '', //发送方
+				sys_date: '', //回复时间
+				sys_content: '' //私信内容
+			}
 		}),
 		computed: {},
 		methods: {
-			sendReply(){
-//				this.axios({
-//						url: this.serviceUrl + "app/sys_message.htm",
-//						//url:"http://192.168.8.183:8088/app/sys_message.htm",
-//						method: "POST",
-//						data: this.$qs.stringify({
-//							token: this.token,
-//							userId: this.userId,
-//							pageSize: this.pageSize,
-//							currentPage: this.currentPage,
-//						}),
-//					}).then((res) => {
-//						this.msg = res.data;
-//						console.log(res.data)
-//					}, (err) => {
-//						// 请求失败回调
-//									if(res.data.reply){
-//										
-//									}
-//						console.log("请求错误");
-//					});
-//				 let con = this.$refs.replyText[0].value;
-//				 console.log(con)
-//				 let con = this.text1;
-//				 console.log(con)
-				 console.log(this.msg.messageList.length)
-            	if(this.book.sys_content!=""&&this.book.sys_content!=undefined&&this.book.sys_content!=null){
-            		this.book.sys_id=this.msg.messageList.length+1;
-//          		this.book.sys_content = con;
-					this.msg.messageList.push(this.book);
-					console.log(this.msg.messageList)
-			        this.book = "";
-                    this.replyFlag = false;
-            	}else{
-            		alert("发送内容不能为空!");
-            	}
+			infoLi() {
+				MessageBox.confirm('确定执行此操作?').then(action => {
+					this.infoLiX = 1
+				});
+
+			},
+			reply(index) {
+				this.replyFlag = !this.replyFlag;
+				console.log(index)
+			},
+			sendReply() {
+				//				this.axios({
+				//						url: this.serviceUrl + "app/sys_message.htm",
+				//						//url:"http://192.168.8.183:8088/app/sys_message.htm",
+				//						method: "POST",
+				//						data: this.$qs.stringify({
+				//							token: this.token,
+				//							userId: this.userId,
+				//							title: this.title,
+				//							content: this.content,
+				//						}),
+				//					}).then((res) => {
+				//						this.msg = res.data;
+				//						console.log(res.data)
+				//					}, (err) => {
+				//						// 请求失败回调
+				//									if(res.data.reply){
+				//										
+				//									}
+				//						console.log("请求错误");
+				//					});
+				//			
+				let that = this;
+				this.book.sys_content = that.text;
+				console.log(this.msgMes.messageList.length)
+				if(that.text != "" && that.text != undefined && that.text != null) {
+					this.book.sys_id = this.msgMes.messageList.length + 1;
+					this.msgMes.messageList.push(this.book);
+					console.log(this.msgMes.messageList)
+					console.log(this.book)
+					that.text = "";
+					this.replyFlag = false;
+				} else {
+					alert("发送内容不能为空!");
+				}
 			},
 			tab(num) {
 				this.tabFlag = num;
@@ -191,6 +202,23 @@
 					this.axios({
 						url: this.serviceUrl + "app/sys_message.htm",
 						//	url:"http://192.168.8.183:8088/app/sys_message.htm",
+						method: "POST",
+						data: this.$qs.stringify({
+							token: this.token,
+							userId: this.userId,
+							pageSize: this.pageSize,
+							currentPage: 1,
+						}),
+					}).then((res) => {
+						this.msgNot = res.data;
+						console.log(res.data)
+					}, (err) => {
+						// 请求失败回调
+						console.log("请求错误");
+					});
+				} else if(this.tabFlag == 1) {
+					this.axios({
+						url: this.serviceUrl + "app/sys_doc.htm",
 						method: "POST",
 						data: this.$qs.stringify({
 							token: this.token,
@@ -207,24 +235,6 @@
 					});
 				} else if(this.tabFlag == 2) {
 					this.axios({
-						url: this.serviceUrl + "app/sys_doc.htm",
-						//url:"http://192.168.8.183:8088/app/sys_doc.htm",
-						method: "POST",
-						data: this.$qs.stringify({
-							token: this.token,
-							userId: this.userId,
-							pageSize: this.pageSize,
-							currentPage: this.currentPage,
-						}),
-					}).then((res) => {
-						this.msg = res.data;
-						console.log(res.data)
-					}, (err) => {
-						// 请求失败回调
-						console.log("请求错误");
-					});
-				} else if(this.tabFlag == 4) {
-					this.axios({
 						url: this.serviceUrl + "app/sec_message.htm",
 						//						url:"http://192.168.8.183:8088/app/app/sec_message.htm",
 						method: "POST",
@@ -235,7 +245,7 @@
 							currentPage: this.currentPage,
 						}),
 					}).then((res) => {
-						this.msg = res.data;
+						this.msgMes = res.data;
 						console.log(res.data)
 					}, (err) => {
 						// 请求失败回调
@@ -249,11 +259,10 @@
 			//系统通知分页
 			infiniteHandler0($state) {
 				// console.log(this.tabFlag);
-				var that = this;
-				console.log(this.msg.currentPage)
-				console.log(this.msg.totalPage)
+				console.log(this.msgNot.currentPage)
+				//				console.log(this.msg.totalPage)
 				//    const temp = [];
-				if(this.msg.currentPage >= this.msg.totalPage) {
+				if(this.msgNot.currentPage >= this.msgNot.totalPage) {
 					$state.complete();
 				} else {
 					this.axios({
@@ -263,15 +272,16 @@
 						data: this.$qs.stringify({
 							token: this.token,
 							userId: this.userId,
-							currentPage: parseInt(this.msg.currentPage) + 1, //请求第几页的数据
+							currentPage: parseInt(this.msgNot.currentPage) + 1, //请求第几页的数据
 							pageSize: this.pageSize
 						}),
 					}).then((res) => {
+						console.log(res.data)
 						//更新数据
-						this.msg.currentPage = res.data.currentPage;
-						this.msg.totalPage = res.data.totalPage;
+						this.msgNot.currentPage = res.data.currentPage;
+						this.msgNot.totalPage = res.data.totalPage;
 						for(let i = 0, max = res.data.messageList.length; i < max; i++) {
-							this.msg.messageList.push(res.data.messageList[i]);
+							this.msgNot.messageList.push(res.data.messageList[i]);
 						}
 						$state.loaded();
 
@@ -294,8 +304,8 @@
 					$state.complete();
 				} else {
 					this.axios({
-												url: this.serviceUrl + "app/sys_doc.htm",
-//						url: "http://192.168.8.183:8088/app/app/sys_doc.htm",
+						url: this.serviceUrl + "app/sys_doc.htm",
+						//						url: "http://192.168.8.183:8088/app/app/sys_doc.htm",
 						method: "POST",
 						data: this.$qs.stringify({
 							token: this.token,
@@ -305,10 +315,11 @@
 						}),
 					}).then((res) => {
 						//更新数据
+						console.log(res.data)
 						this.msg.currentPage = res.data.currentPage;
 						this.msg.totalPage = res.data.totalPage;
-						for(let i = 0, max = res.data.messageList.length; i < max; i++) {
-							this.msg.messageList.push(res.data.messageList[i]);
+						for(let i = 0, max = res.data.docList.length; i < max; i++) {
+							this.msg.docList.push(res.data.docList[i]);
 						}
 						$state.loaded();
 
@@ -341,7 +352,7 @@
 							currentPage: 1,
 						}),
 					}).then((res) => {
-						this.msg = res.data;
+						this.msgNot = res.data;
 						console.log(res.data)
 					}, (err) => {
 						// 请求失败回调
@@ -402,6 +413,8 @@
 				display: inline-block;
 				line-height: $tabHeight;
 				position: relative;
+				width : 33%;
+				text-align:center;
 				.hide {
 					display: none;
 				}
@@ -448,11 +461,37 @@
 					height: 2.976rem + $padding;
 					padding: $padding / 2 $padding;
 					border-bottom: .016rem solid $listBar;
+					.leftDot {
+						float: left;
+						width: .8rem;
+						height: 100%;
+						position: relative;
+						.dotMes {
+							width: 0.16rem;
+							height: 0.16rem;
+							display: inline-block;
+							background-color: green;
+							border-radius: 50%;
+							position: absolute;
+							top: 50%;
+							bottom: 0;
+						}
+					}
+					.rightContent {
+						float: left;
+					}
 					.title {
 						color: #333;
 						line-height: 2em;
 						font-size: .512rem;
 						@include text-overflow;
+						.tit-content {
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							width: 8rem;
+							display: inline-block;
+						}
 					}
 					.content {
 						color: #999;
@@ -476,7 +515,7 @@
 					padding: .48rem .48rem;
 					font-size: .448rem;
 					border-bottom: 1px solid #DCDCDC;
-				background-color: #FFFFFF;
+					background-color: #FFFFFF;
 					.inform-con {
 						display: inline-block;
 						width: 70%;
@@ -504,10 +543,10 @@
 						color: #9D9D9D;
 					}
 					.reply-box {
-						    background-color: #f6f6f6;
-						    padding: .16rem;
-						    font-size: .32rem;
-						}
+						background-color: #f6f6f6;
+						padding: .16rem;
+						font-size: .32rem;
+					}
 					.reply-textarea {
 						height: 1.52rem;
 						.reply-text {
@@ -517,10 +556,9 @@
 							resize: none;
 							float: left;
 							font-size: .448rem;
-							border:1px solid #333;
+							border: 1px solid #333;
 							padding: .16rem;
 						}
-						
 						.send-btn {
 							margin-left: .4rem;
 							font-size: .32rem;

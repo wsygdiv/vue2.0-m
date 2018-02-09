@@ -91,8 +91,8 @@
 					this.token = window.sessionStorage.getItem("token");
 			
 				this.axios({
-//					url: this.serviceUrl + "app/personMessage.htm",
-					url:"http://124.204.40.11:8088/app/personMessage.htm",
+					url: this.serviceUrl + "app/personMessage.htm",
+//					url:"http://124.204.40.11:8088/app/personMessage.htm",
 					method: "POST",
 					// 请求后台发送的数据
 					data:  this.$qs.stringify({

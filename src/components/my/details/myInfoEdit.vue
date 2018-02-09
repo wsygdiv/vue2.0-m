@@ -8,7 +8,7 @@
 		</div>
 		<div class="user-info user-main">
 			<ul>
-				<li>
+				<router-link :to="'/my/setEdit/imageUpload'" tag="li">
 					<span class="user-info-name title">头像</span>
 					<div class="edit-more">
 						<!--<div class="imgpre"><img :src="inversePic"  v-show="inversePic" alt="pic">
@@ -16,15 +16,14 @@
 						<!--<Upload class="upload" @pic="(url) => {inversePic = url}">
 							<span class="btn-right iconfont">&#xe602;</span>
 						</Upload>-->
-						<Upload @pic="getLocalPic" :serviceUrl="serviceUrl" @id="getPhotoId">
+						<div :serviceUrl="serviceUrl" @id="getPhotoId">
 							<span class="head-pic">
 			                  <img ref="img" :src="avater" alt="pic">
 			                </span>
 							<span class="btn-right iconfont">&#xe602;</span>
-						</Upload>
-
+						</div>
 					</div>
-				</li>
+				</router-link>
 				<li>
 					<span class="user-info-name">用户名</span>
 					<span class="edit-more" @click="popupVisibleUser = true" size="large"><span class="btn-right iconfont"><span v-text="userName"></span>&#xe602;</span>
@@ -185,7 +184,6 @@
 					<ul v-show="btnC == true">
 						<li v-for="(city,index) in addressCity" @click="changeCity(index)" ref="selValueC" :key="index" :id="city.id">{{city.name}}</li>
 					</ul>
-
 				</ul>
 				<ul class="select">
 					<li value="" v-text="defaultRegion" @click="btnA =true">县</li>
@@ -533,11 +531,13 @@
 			//			用户名修改
 			confirmSureUser() {
 				this.userName = this.userName1;
+				//				this.userName1 = '';//可以设置重新输入时清空输入框的值
 				this.popupVisibleUser = false;
 			},
 			//			兴趣爱好修改
 			confirmSureInterests() {
 				this.interests = this.interests1;
+				//				this.interests1 = '';//可以设置重新输入时清空输入框的值
 				this.popupVisibleInterests = false;
 			},
 			//			工作单位修改
@@ -591,7 +591,17 @@
 			},
 			//			身份证修改
 			confirmSureIden() {
-				this.identity = this.identity1;
+				if(this.identity = ""){
+					this.identity = this.identity1;
+				}else if(!/^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X|x)$/.test(this.identity1)) {
+					Toast({
+						message: '请填写有效的18位身份证号码',
+						position: 'middle',
+						className: "tip",
+					});
+				} else {
+					this.identity = this.identity1;
+				}
 				this.popupVisibleIdentity = false;
 			},
 			//		所在行业修改
@@ -615,14 +625,6 @@
 			getPhotoId: function(photoId) {
 				this.photoId = photoId
 			},
-			// 跳转到图片剪裁
-			getLocalPic: function(avater) {
-				this.avater = avater;
-				this.localPic = avater;
-				//	console.log(this.avater);
-				//	console.log(this.localPic)
-				//	this.$router.push('/my/setEdit/imageUpload')
-			},
 		},
 		mounted: function() {
 			if(!window.sessionStorage.getItem("userId")) {
@@ -631,12 +633,12 @@
 				this.userId = window.sessionStorage.getItem("userId");
 				this.token = window.sessionStorage.getItem("token");
 				this.axios({
-					//									url: this.serviceUrl + "app/personDetail.htm",
+					//	url: this.serviceUrl + "app/personDetail.htm",
 					url: this.serviceUrl + "app/personDetail.htm",
 					method: "POST",
 					// 请求后台发送的数据
 					data: this.$qs.stringify({
-						//					userId: 32816, //测试用的id
+						//	userId: 32816, //测试用的id
 						userId: this.userId,
 					}),
 
@@ -655,8 +657,8 @@
 					} else {
 						this.sex = "保密";
 					}
-					this.interests = res.data.hobbies; //爱好
-					this.workUnit = res.data.workPlace;
+					this.interests = res.data.hobbiesString; //爱好
+					this.workUnit = res.data.workSpe;
 					this.workTit = res.data.workName;
 					if(res.data.marryState == 0) {
 						this.marriage = "已婚";
@@ -762,10 +764,13 @@
 		}
 		.page-picker-wrapper /deep/ .picker-selected {
 			font-size: .675rem !important;
+			 height: .72rem !important;
+			line-height: .72rem !important;
 		}
 		.page-picker-wrapper /deep/ .picker-center-highlight {
-			height: .736rem !important;
-			line-height: .736rem !important;
+			height: .72rem !important;
+			line-height: .72rem !important;
+			margin-top: .402rem;
 		}
 	}
 	
@@ -895,13 +900,19 @@
 						width: auto;
 						height: .88rem;
 						vertical-align: middle;
-						border-radius: 50%;
 					}
 				}
 				span {
 					height: .88rem;
 					line-height: .88rem;
 					text-align: right;
+				}
+				.head-pic {
+					width: .88rem;
+					display: inline-block;
+					overflow: hidden;
+					border-radius: 50%;
+					vertical-align: middle;
 				}
 				.user-info-name {
 					vertical-align: top;
@@ -1007,4 +1018,8 @@
 	.mint-toast-text {
 		font-size: .484rem;
 	}
+	label.mint-button-text {
+    display: inline-block;
+    height: 100%;
+}
 </style>

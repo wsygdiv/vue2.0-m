@@ -1,19 +1,22 @@
 <template>
 	<div id="matDetails" class="matDetails">
 		<slot name="app-header"></slot>
+		<div>
+			<span class="shareIcon iconfont"@click="shareAll">
+					&#xe609;
+			</span>
+		</div>
 		<div class="app-content" :class="false == matFlag ? 'autoH' : 'fixH'">
 			<!--大图banner Start-->
 			<div class="banner-box">
 				<div class="banner cont">
 					<swiper class="banner-banner" :options="matBanner">
 						<swiper-slide class="banner-list" v-for="(bannerUrl,index) in msg.goods_photos" :key="bannerUrl.key" :style="{backgroundImage: 'url(' + bannerUrl + ')'}">
-						
+
 						</swiper-slide>
 						<div class="swiper-pagination" slot="pagination"></div>
 					</swiper>
-					<div class="shareIcon">
-							分享
-						</div>
+
 				</div>
 			</div>
 			<!-- banner End 
@@ -33,20 +36,20 @@
 			<div class="pro-rule">
 				<h2>规格参数</h2>
 				<!--v-for="specList in msg.spec_list" :key="specList.key"-->
-				<div :class="{'autoH1':layout=='iconhide'}"class="specList">
-					<div class=""v-for="(specList,index) in msg.spec_list" :key="specList.key" >
+				<div :class="{'autoH1':layout=='iconhide'}" class="specList">
+					<div class="" v-for="(specList,index) in msg.spec_list" :key="specList.key">
 						<p class="clearfix">
-						   <span class="tit" v-text="specList.specname">品牌</span>
-						   <p v-for="(specKind,index) in specList.specvalues":key="specKind.key">
-						   	   <span class="tit-content" v-text="specKind">品牌</span>
-						   </p>		
-					    </p>
+							<span class="tit" v-text="specList.specname">品牌</span>
+							<p v-for="(specKind,index) in specList.specvalues" :key="specKind.key">
+								<span class="tit-content" v-text="specKind">品牌</span>
+							</p>
+						</p>
 					</div>
-										
+
 				</div>
-				<p class="show-text"style="text-align: center;font-size: .484rem;">
-						<span class="show-more iconfont" @click="layout='iconhide'" v-if="layout=='iconmore'">查看更多&#xe61b;</span>
-						<span class="show-hide iconfont" @click="layout='iconmore'" v-if="layout=='iconhide'">收回更多&#xe64a;</span>
+				<p class="show-text" style="text-align: center;font-size: .484rem;">
+					<span class="show-more iconfont" @click="layout='iconhide'" v-if="layout=='iconmore'">查看更多&#xe61b;</span>
+					<span class="show-hide iconfont" @click="layout='iconmore'" v-if="layout=='iconhide'">收回更多&#xe64a;</span>
 				</p>
 			</div>
 			<!--商品详情-->
@@ -88,20 +91,20 @@
 						<span class="rule-text">请选择规格</span>
 					</div>
 				</div>
-				<div class="specification1"v-for="(specList,index) in msg.spec_list" :key="specList.key" >
-						<div class="clearfix" >
-						   <span class="tit" v-text="specList.specname">品牌</span>
-						   <p v-for="(specKind,index) in specList.specvalues":key="specKind.key">
-						   	   <span class="tit-content" v-text="specKind":ref="index === tabFlag ? 'active' : ''"   :class="index === tabFlag ? 'active' : ''" @click="tab(index)">品牌</span>
-						   </p>						   
-					    </div>
+				<div class="specification1" v-for="(specList,index) in msg.spec_list" :key="specList.key">
+					<div class="clearfix">
+						<span class="tit" v-text="specList.specname">品牌</span>
+						<p v-for="(specKind,index) in specList.specvalues" :key="specKind.key">
+							<span class="tit-content" v-text="specKind" :ref="index === tabFlag ? 'active' : ''" :class="index === tabFlag ? 'active' : ''" @click="tab(index)">品牌</span>
+						</p>
+					</div>
 				</div>
-				
+
 				<div class="buy-num">
 					<span class="num-text">购买数量</span>
 					<div class="btn-num">
 						<span v-on:click="numChange(-1)">-</span>
-						<input type="number" class="num" value="num" v-model="num"/>
+						<input type="number" class="num" value="num" v-model="num" />
 						<span v-on:click="numChange(1)">+</span>
 					</div>
 				</div>
@@ -125,17 +128,17 @@
 		name: "matDetails",
 		props: ['serviceUrl'],
 		data: () => ({
-			gsp:"",
+			gsp: "",
 			matFlag: false,
 			tabFlag: 0,
 			userId: "",
 			token: '',
 			msg: {},
-			num:1,
+			num: 1,
 			layout: 'iconmore',
 			matBanner: {
 				notNextTick: true,
-//				autoplay: false,
+				//				autoplay: false,
 				autoplay: 4000,
 				direction: 'horizontal',
 				grabCursor: true,
@@ -145,9 +148,12 @@
 				pagination: '.banner .swiper-pagination',
 				observeParents: true,
 			},
-			
+
 		}),
 		methods: {
+			shareAll(){
+				alert("分享个大平台")
+			},
 			buy() {
 				this.matFlag = true;
 			},
@@ -164,25 +170,25 @@
 				if(this.num <= 1) {
 					this.num = 1;
 				}
-				
-			},			
+
+			},
 			btnSure() {
 				if(!window.sessionStorage.getItem("userId")) {
 					this.$router.push("/login");
 				} else {
 					this.userId = window.sessionStorage.getItem("userId");
 					this.token = window.sessionStorage.getItem("token");
-//                  this.gsp.push(this.$refs.active);
-                    
-                    for (let i = 0;i < this.$refs.active.length;i++) {
-                    	let obj=this.msg.spec_list[i].specIds[0];
-                    	this.gsp+=obj+",";
-                    };
-                    let str = this.gsp;
-//                  this.gsp = (str.substring(str.length-1)==',')?str.substring(0,str.length-1):str;
-                    this.gsp =JSON.stringify(str.substring(0,str.length-1));
-                     console.log(this.gsp);
-//                  console.log(JSON.stringify(this.gsp)); 
+					//                  this.gsp.push(this.$refs.active);
+
+					for(let i = 0; i < this.$refs.active.length; i++) {
+						let obj = this.msg.spec_list[i].specIds[0];
+						this.gsp += obj + ",";
+					};
+					let str = this.gsp;
+					//                  this.gsp = (str.substring(str.length-1)==',')?str.substring(0,str.length-1):str;
+					this.gsp = JSON.stringify(str.substring(0, str.length - 1));
+					console.log(this.gsp);
+					//                  console.log(JSON.stringify(this.gsp)); 
 					this.$http({
 						url: this.serviceUrl + "app/addCart.htm",
 						method: "POST",
@@ -191,8 +197,8 @@
 							userId: this.userId,
 							price: this.msg.goods_current_price,
 							id: this.msg.id,
-							count:this.num,
-					        gsp:this.gsp,
+							count: this.num,
+							gsp: this.gsp,
 						},
 						headers: {
 							"Content-Type": "x-www-from-urlencoded"
@@ -217,7 +223,7 @@
 			beforeCreate: {
 				this.$http({
 					url: this.serviceUrl + "app/goods.htm",
-//					url: 'http://192.168.8.183:8088/app/goods.htm',
+					//					url: 'http://192.168.8.183:8088/app/goods.htm',
 					method: "POST",
 					// 请求后台发送的数据
 					params: {
@@ -278,6 +284,18 @@
 		height: auto;
 	}
 	
+	.shareIcon {
+		    position: absolute;
+		    right: .16rem;
+		    top: .32rem;
+		    font-size: .625rem;
+		    z-index: 10;
+		    color: #333333;
+		span {
+			display: inline-block;
+		}
+	}
+	
 	.matDetails {
 		background-color: #EEEEEE;
 		.app-content {
@@ -307,15 +325,6 @@
 					width: 12rem;
 					display: block;
 					height: $height;
-				}
-				.shareIcon{
-					    position: absolute;
-					    right: 5px;
-					    background: red;
-					    font-size: .448rem;
-					span{
-						display: inline-block;
-					}
 				}
 				.banner-banner {
 					width: 100%;
@@ -376,9 +385,8 @@
 			background-color: #FFFFFF;
 			margin-bottom: .32rem;
 			padding: .32rem;
-			
-			.specList{
-				height: 4rem;
+			.specList {
+				height: 3.6rem;
 				overflow: hidden;
 				font-size: .484rem;
 			}
@@ -395,8 +403,8 @@
 				color: #999999;
 				text-align: center;
 			}
-			.autoH1{
-				height:auto;
+			.autoH1 {
+				height: auto;
 			}
 		}
 		.pro-detail {
@@ -509,22 +517,21 @@
 					margin-top: 1rem;
 					p {
 						margin-bottom: .32rem;
-						width:auto;						
+						width: auto;
 					}
 					span {
 						display: inline-block;
 						padding: 0 .24rem;
 						height: .8rem;
 						text-align: center;
-						line-height: .8rem;	
+						line-height: .8rem;
 						border-radius: .6rem;
 					}
-					.active{
+					.active {
 						background-color: $orange;
 						color: #FFFFFF;
 					}
 				}
-				
 				.buy-num {
 					overflow: hidden;
 					margin: .64rem 0 0 .32rem;
@@ -539,10 +546,10 @@
 						float: right;
 						margin-bottom: 1.68rem;
 						margin-right: .608rem;
-						.num{
-						      width: 1.4rem;
-						    font-size: 0.48rem;
-						    text-align: center
+						.num {
+							width: 1.4rem;
+							font-size: 0.48rem;
+							text-align: center
 						}
 						span {
 							background-color: #CCCCCC;

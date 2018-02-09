@@ -46,43 +46,12 @@
 			   	   console.log(this.userId)
 			   	   MessageBox.confirm('确定执行此操作?').then(action => {
                       window.sessionStorage.removeItem("userId");
-                      this.$router.go(-1);
+                      this.$router.push("/");
 			       });
 			   },
 			   
 		},
 		mounted: function() {
-            if(!window.sessionStorage.getItem("userId")) {
-					this.$router.push("/login");
-				} else {
-					this.userId = window.sessionStorage.getItem("userId");
-					this.token = window.sessionStorage.getItem("token");
-			beforeCreate: {
-				this.$http({
-//					url: this.serviceUrl + "app/goods.htm",
-					method: "POST",
-					// 请求后台发送的数据
-					params: {
-						id: this.$route.params.goodsId,
-						data: {
-
-						}
-					},
-					// 设置请求头
-					headers: {
-						"Content-Type": "x-www-from-urlencoded"
-					}
-				}).then(function(res) {
-					// 请求成功回调
-					console.log(JSON.stringify(res.data));
-					this.msg = res.data;
-					//console.log(this.msg.companyArray)
-				}, function(res) {
-					// 请求失败回调
-					console.log("error from matDetail");
-				});
-			}
-			}
 		}
 	}
 </script>
